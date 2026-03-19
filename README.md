@@ -1,4 +1,4 @@
-# PVG College Auth & Role Management Demo 🎓
+# PVG College Auth & Authorization Module 🎓
 
 A full-stack authentication, authorization, and student management application built for **PVG College of Science**.
 
@@ -64,12 +64,12 @@ You will need PostgreSQL installed and running on your machine (default port `54
 4. Configure your Environment Variables:
    - Ensure you have a `.env` file inside the `backend` folder containing your database credentials:
      ```env
-     DATABASE_URL=postgresql+psycopg2://postgres:sai123@localhost:5432/pvg_auth
+     DATABASE_URL=postgresql+psycopg2://postgres:demo123@localhost:5432/pvg_auth
      SECRET_KEY=pvg_super_secret_key_change_in_production
      ALGORITHM=HS256
      ACCESS_TOKEN_EXPIRE_MINUTES=60
      ```
-   *(Update `sai123` to your actual Postgres password).*
+   *(Update `demo123` to your actual Postgres password).*
 
 5. Create Demo Data (Optional but Recommended):
    ```bash
