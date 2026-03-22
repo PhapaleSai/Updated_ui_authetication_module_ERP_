@@ -36,6 +36,26 @@ npm install
 npm run dev
 ```
 
+### Running Services Independently
+If you need to start services separately, use the following commands:
+
+- **Backend (FastAPI)**:
+  ```bash
+  cd backend
+  venv\Scripts\activate   # Activate virtualenv (Windows)
+  uvicorn main:app --reload --port 8000
+  ```
+- **User Portal (Registration)**:
+  ```bash
+  cd frontend/user
+  npm run dev
+  ```
+- **Admin Portal (Management)**:
+  ```bash
+  cd frontend/admin
+  npm run dev
+  ```
+
 ### Access Points:
 - **Admin Dashboard**: [http://localhost:5174](http://localhost:5174) (Login: `admin` / `admin`)
 - **User Portal**: [http://localhost:5173](http://localhost:5173)

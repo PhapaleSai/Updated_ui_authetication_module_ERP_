@@ -9,6 +9,7 @@ import Users from './pages/Users';
 import Roles from './pages/Roles';
 import Audit from './pages/Audit';
 import UserProfile from './pages/UserProfile';
+import Export from './pages/Export';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const [user, setUser] = useState(null);
@@ -53,7 +54,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return React.cloneElement(children, { user });
 };
 
-const Layout = ({ children, user }) => {
+const Layout = ({ children, user, theme, toggleTheme }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -95,6 +96,9 @@ const Layout = ({ children, user }) => {
                     <NavLink to="/audit" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
                         <span>📜</span> Audit Log
                     </NavLink>
+                    <NavLink to="/export" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+                        <span>📤</span> Export Hub
+                    </NavLink>
                 </nav>
 
                 <div className="sidebar-footer">
@@ -117,6 +121,13 @@ const Layout = ({ children, user }) => {
 
             <main className="main-content">
                 <header className="top-header">
+                    <button 
+                        className="theme-toggle" 
+                        onClick={toggleTheme}
+                        title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                    >
+                        {theme === 'dark' ? '☀️' : '🌙'}
+                    </button>
                     <div className="header-user" onClick={() => navigate(`/users/${user.user_id}`)}>
                         <div className="avatar" style={{ width: 32, height: 32, fontSize: '0.8rem' }}>{user.username[0].toUpperCase()}</div>
                         <div style={{ textAlign: 'right' }}>
@@ -134,32 +145,46 @@ const Layout = ({ children, user }) => {
 };
 
 function App() {
+    const [theme, setTheme] = useState(localStorage.getItem('admin_theme') || 'dark');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('admin_theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
     return (
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={
                 <ProtectedRoute>
-                    <Layout><Dashboard /></Layout>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><Dashboard /></Layout>
                 </ProtectedRoute>
             } />
             <Route path="/users" element={
                 <ProtectedRoute allowedRoles={['admin', 'vice_principal']}>
-                    <Layout><Users /></Layout>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><Users /></Layout>
                 </ProtectedRoute>
             } />
             <Route path="/roles" element={
                 <ProtectedRoute allowedRoles={['admin', 'vice_principal']}>
-                    <Layout><Roles /></Layout>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><Roles /></Layout>
                 </ProtectedRoute>
             } />
             <Route path="/audit" element={
                 <ProtectedRoute>
-                    <Layout><Audit /></Layout>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><Audit /></Layout>
+                </ProtectedRoute>
+            } />
+            <Route path="/export" element={
+                <ProtectedRoute>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><Export /></Layout>
                 </ProtectedRoute>
             } />
             <Route path="/users/:id" element={
                 <ProtectedRoute allowedRoles={['admin', 'vice_principal']}>
-                    <Layout><UserProfile /></Layout>
+                    <Layout theme={theme} toggleTheme={toggleTheme}><UserProfile /></Layout>
                 </ProtectedRoute>
             } />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

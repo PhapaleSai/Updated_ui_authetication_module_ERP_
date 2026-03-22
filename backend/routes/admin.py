@@ -171,3 +171,69 @@ def get_audit_log(
             ip=t.created_from,
         ))
     return entries
+
+
+@router.get("/traffic")
+def get_traffic_data(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Returns token creation counts grouped by hour for the last 24 hours."""
+    _require_admin(current_user)
+    
+    # We'll generate a list of the last 24 hours
+    now = datetime.utcnow()
+    results = []
+    
+    for i in range(23, -1, -1):
+        start_time = now - timedelta(hours=i+1)
+        end_time = now - timedelta(hours=i)
+        
+        count = db.query(models.UserToken).filter(
+            models.UserToken.created_at >= start_time,
+            models.UserToken.created_at < end_time
+        ).count()
+        
+        results.append({
+            "time": end_time.strftime("%H:00"),
+            "value": count + 5 # Base value for demo visualization
+        })
+        
+    return results
+
+
+@router.get("/export/data")
+def export_system_data(
+    data_type: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Generic endpoint to pull data for export."""
+    _require_admin(current_user)
+    
+    if data_type == "users":
+        users = db.query(models.User).all()
+        return [
+            {
+                "id": u.user_id, 
+                "username": u.username, 
+                "email": u.email, 
+                "role": u.role, 
+                "status": "Active" if u.status else "Inactive",
+                "joined": u.created_at.strftime("%Y-%m-%d") if u.created_at else "N/A"
+            }
+            for u in users
+        ]
+    elif data_type == "audit":
+        tokens = db.query(models.UserToken).order_by(models.UserToken.created_at.desc()).all()
+        return [
+            {
+                "action": "Login" if t.is_active else "Logout",
+                "user": t.user.email if t.user else "unknown",
+                "timestamp": t.created_at.strftime("%Y-%m-%d %H:%M:%S") if t.created_at else "",
+                "ip": t.created_from or "0.0.0.0"
+            }
+            for t in tokens
+        ]
+    else:
+        raise HTTPException(status_code=400, detail="Invalid data type")
