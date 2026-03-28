@@ -32,6 +32,7 @@ class User(Base, AuditMixin):
 
     user_id = Column(Integer, primary_key=True, index=True)
     username = Column(String(100), unique=True, nullable=False)
+    full_name = Column(String(150), nullable=True)
     email = Column(String(150), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     status = Column(Boolean, default=True)
@@ -44,7 +45,7 @@ class User(Base, AuditMixin):
     @property
     def role(self):
         roles = [ur.role.role_name for ur in self.user_roles if ur.role]
-        return roles[0] if roles else "guest"
+        return roles[0] if roles else "Guest"
 
 
 class UserRole(Base, AuditMixin):
@@ -64,7 +65,9 @@ class UserToken(Base, AuditMixin):
     token_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"))
     token = Column(String, unique=True, index=True, nullable=False)
+    refresh_token = Column(String, unique=True, index=True, nullable=True) # Added refresh token
     expiry_date = Column(DateTime, nullable=False)
+    refresh_token_expiry = Column(DateTime, nullable=True) # Added refresh token expiry
     is_active = Column(Boolean, default=True)
 
     user = relationship("User", back_populates="tokens")

@@ -71,6 +71,7 @@ ROLE_DATA = [
     ("Student",       "Enrolled student"),
     ("Admin",         "System administrator"),
     ("Accountant",    "Finance department staff"),
+    ("Guest",          "Default role with minimum permissions"),
 ]
 
 # Role -> list of permission_names it gets
@@ -85,6 +86,7 @@ ROLE_PERMISSIONS = {
                        "view_payments","view_jobs","view_internships"],
     "Admin":          [p[0] for p in PERMISSION_DATA],          # all
     "Accountant":     ["view_fee","collect_fee","view_payments","view_student"],
+    "Guest":          ["view_timetable", "view_calendar"],
 }
 
 
@@ -102,44 +104,64 @@ def run():
     module_ids = []
     for name, desc in MODULE_DATA:
         cur.execute(
-            "INSERT INTO modules (module_name, description) VALUES (%s, %s) RETURNING module_id",
+            "INSERT INTO modules (module_name, description) VALUES (%s, %s) ON CONFLICT (module_name) DO NOTHING RETURNING module_id",
             (name, desc)
         )
-        module_ids.append(cur.fetchone()[0])
-    print(f"    → {len(module_ids)} modules inserted")
+        row = cur.fetchone()
+        if row:
+            module_ids.append(row[0])
+        else:
+            cur.execute("SELECT module_id FROM modules WHERE module_name = %s", (name,))
+            module_ids.append(cur.fetchone()[0])
+    print(f"    → {len(module_ids)} modules mapped")
 
     # ── 2. FEATURES ─────────────────────────────────────────────────────────────
     print("[2] Inserting features...")
     feature_ids = []
     for fname, fdesc, mod_idx in FEATURE_DATA:
         cur.execute(
-            "INSERT INTO features (feature_name, description, module_id) VALUES (%s, %s, %s) RETURNING feature_id",
+            "INSERT INTO features (feature_name, description, module_id) VALUES (%s, %s, %s) ON CONFLICT (feature_name) DO NOTHING RETURNING feature_id",
             (fname, fdesc, module_ids[mod_idx])
         )
-        feature_ids.append(cur.fetchone()[0])
-    print(f"    → {len(feature_ids)} features inserted")
+        row = cur.fetchone()
+        if row:
+            feature_ids.append(row[0])
+        else:
+            cur.execute("SELECT feature_id FROM features WHERE feature_name = %s", (fname,))
+            feature_ids.append(cur.fetchone()[0])
+    print(f"    → {len(feature_ids)} features mapped")
 
     # ── 3. PERMISSIONS ──────────────────────────────────────────────────────────
     print("[3] Inserting permissions...")
     permission_map = {}   # permission_name -> permission_id
     for pname, action, feat_idx in PERMISSION_DATA:
         cur.execute(
-            "INSERT INTO permissions (permission_name, action, feature_id) VALUES (%s, %s, %s) RETURNING permission_id",
+            "INSERT INTO permissions (permission_name, action, feature_id) VALUES (%s, %s, %s) ON CONFLICT (permission_name, action) DO NOTHING RETURNING permission_id",
             (pname, action, feature_ids[feat_idx])
         )
-        permission_map[pname] = cur.fetchone()[0]
-    print(f"    → {len(permission_map)} permissions inserted")
+        row = cur.fetchone()
+        if row:
+            permission_map[pname] = row[0]
+        else:
+            cur.execute("SELECT permission_id FROM permissions WHERE permission_name = %s AND action = %s", (pname, action))
+            permission_map[pname] = cur.fetchone()[0]
+    print(f"    → {len(permission_map)} permissions mapped")
 
     # ── 4. ROLES ────────────────────────────────────────────────────────────────
     print("[4] Inserting roles...")
     role_map = {}   # role_name -> role_id
     for rname, rdesc in ROLE_DATA:
         cur.execute(
-            "INSERT INTO roles (role_name, description) VALUES (%s, %s) RETURNING role_id",
+            "INSERT INTO roles (role_name, description) VALUES (%s, %s) ON CONFLICT (role_name) DO NOTHING RETURNING role_id",
             (rname, rdesc)
         )
-        role_map[rname] = cur.fetchone()[0]
-    print(f"    → {len(role_map)} roles inserted")
+        row = cur.fetchone()
+        if row:
+            role_map[rname] = row[0]
+        else:
+            cur.execute("SELECT role_id FROM roles WHERE role_name = %s", (rname,))
+            role_map[rname] = cur.fetchone()[0]
+    print(f"    → {len(role_map)} roles mapped")
 
     # ── 5. ROLE_PERMISSIONS ─────────────────────────────────────────────────────
     print("[5] Inserting role_permissions...")
@@ -149,14 +171,14 @@ def run():
         for pname in perm_names:
             pid = permission_map[pname]
             cur.execute(
-                "INSERT INTO role_permissions (role_id, permission_id) VALUES (%s, %s)",
+                "INSERT INTO role_permissions (role_id, permission_id) VALUES (%s, %s) ON CONFLICT (role_id, permission_id) DO NOTHING",
                 (rid, pid)
             )
             rp_count += 1
-    print(f"    → {rp_count} role-permission mappings inserted")
+    print(f"    → {rp_count} role-permission mappings processed")
 
     # ── 6. USERS ────────────────────────────────────────────────────────────────
-    print("[6] Inserting 50 fake users...")
+    print("[6] Inserting/Updating 50 fake users...")
     default_password = hash_password("password123")
     user_ids = []
     seen_usernames = set()
@@ -175,8 +197,11 @@ def run():
         seen_emails.add(email)
 
         cur.execute(
-            "INSERT INTO users (username, email, password_hash, status) VALUES (%s, %s, %s, %s) RETURNING user_id",
-            (username, email, default_password, True)
+            """INSERT INTO users (username, full_name, email, password_hash, status) 
+               VALUES (%s, %s, %s, %s, %s) 
+               ON CONFLICT (username) DO UPDATE SET full_name = EXCLUDED.full_name 
+               RETURNING user_id""",
+            (username, name, email, default_password, True)
         )
         user_ids.append(cur.fetchone()[0])
 

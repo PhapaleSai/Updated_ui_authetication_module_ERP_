@@ -14,6 +14,7 @@ import models
 SECRET_KEY = os.getenv("SECRET_KEY", "pvg_super_secret_key_change_in_production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -34,6 +35,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def create_refresh_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "type": "refresh"})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def verify_refresh_token(token: str) -> Optional[dict]:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("type") != "refresh":
+            return None
+        return payload
+    except JWTError:
+        return None
 
 
 # ── User-based dependency (used by new auth/roles APIs) ──────────────────────
@@ -57,12 +75,15 @@ def get_current_user(
 
     # Check if token exists and is active in DB
     db_token = db.query(models.UserToken).filter(
-        models.UserToken.token == token,
-        models.UserToken.is_active == True,
-        models.UserToken.expiry_date > datetime.utcnow()
+        models.UserToken.token == token
     ).first()
     
-    if not db_token:
+    if not db_token or not db_token.is_active:
+        raise credentials_exception
+        
+    if db_token.expiry_date <= datetime.utcnow():
+        db_token.is_active = False
+        db.commit()
         raise credentials_exception
 
     user = db.query(models.User).filter(models.User.email == email).first()

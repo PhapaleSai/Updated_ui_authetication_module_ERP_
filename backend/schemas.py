@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
 
@@ -11,12 +12,23 @@ class LoginRequest(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+    refresh_token: Optional[str] = None
     token_type: str
     role: str
+    user_id: int
+    username: str
+    full_name: Optional[str] = None
+    permissions: List[str] = []
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class LogoutResponse(BaseModel):
     message: str
+
+
+class TokenRefreshRequest(BaseModel):
+    refresh_token: str
 
 
 # ── Roles ───────────────────────────────────────────────────────────────────
@@ -42,14 +54,18 @@ class AssignRoleResponse(BaseModel):
 
 class UserCreate(BaseModel):
     username: str
+    full_name: Optional[str] = None
     email: EmailStr
     password: str
 
 class UserOut(BaseModel):
     user_id: int
     username: str
+    full_name: Optional[str] = None
     email: str
     role: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

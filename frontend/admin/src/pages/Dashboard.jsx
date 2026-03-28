@@ -100,7 +100,6 @@ const Dashboard = ({ user }) => {
         { label: 'Total Users', value: stats?.total_users || 0, icon: '👥', color: 'var(--accent-primary)', path: '/users' },
         { label: 'Active Sessions', value: stats?.active_sessions || 0, icon: '⚡', color: 'var(--accent-secondary)', path: '/audit' },
         { label: 'System Roles', value: stats?.total_roles || 0, icon: '🛡️', color: 'var(--warning)', path: '/roles' },
-        { label: 'System Tokens', value: stats?.total_tokens || 0, icon: '📜', color: 'var(--accent-tertiary)', path: '/audit' },
     ];
 
     const quickActions = [

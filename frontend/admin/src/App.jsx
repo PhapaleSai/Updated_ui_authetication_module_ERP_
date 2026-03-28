@@ -11,10 +11,13 @@ import Audit from './pages/Audit';
 import UserProfile from './pages/UserProfile';
 import Export from './pages/Export';
 
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    // Serialize allowed roles to string to avoid infinite loop due to array reference changing
+    const allowedRolesStr = allowedRoles?.join(',') || '';
 
     useEffect(() => {
         const token = localStorage.getItem('admin_token');
@@ -30,7 +33,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
                 if (!adminRoles.includes(role)) {
                     localStorage.removeItem('admin_token');
                     navigate('/login');
-                } else if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
+                } else if (allowedRolesStr && !allowedRolesStr.split(',').includes(role)) {
                     navigate('/dashboard');
                 } else {
                     setUser(res.data);
@@ -41,7 +44,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
                 navigate('/login');
             })
             .finally(() => setLoading(false));
-    }, [navigate, allowedRoles]);
+    }, [navigate, allowedRolesStr]);
 
     if (loading) return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>
