@@ -1,0 +1,85 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0083b317feb2 -> dd236e250fc0, Rename columns app_id and bro_id
+Traceback (most recent call last):
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column "application_id" referenced in foreign key constraint does not exist
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Scripts\alembic.exe\__main__.py", line 7, in <module>
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\config.py", line 1047, in main
+    CommandLine(prog=prog).main(argv=argv)
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\config.py", line 1037, in main
+    self.run_cmd(cfg, options)
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\config.py", line 971, in run_cmd
+    fn(
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\command.py", line 483, in upgrade
+    script.run_env()
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\script\base.py", line 545, in run_env
+    util.load_python_file(self.dir, "env.py")
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\util\pyfiles.py", line 116, in load_python_file
+    module = load_module_py(module_id, path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\util\pyfiles.py", line 136, in load_module_py
+    spec.loader.exec_module(module)  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "C:\Users\Vaibhav\Documents\Admission and Enrollment Module\alembic\env.py", line 82, in <module>
+    run_migrations_online()
+  File "C:\Users\Vaibhav\Documents\Admission and Enrollment Module\alembic\env.py", line 76, in run_migrations_online
+    context.run_migrations()
+  File "<string>", line 8, in run_migrations
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\runtime\environment.py", line 969, in run_migrations
+    self.get_context().run_migrations(**kw)
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\runtime\migration.py", line 626, in run_migrations
+    step.migration_fn(**kw)
+  File "C:\Users\Vaibhav\Documents\Admission and Enrollment Module\alembic\versions\dd236e250fc0_rename_columns_app_id_and_bro_id.py", line 28, in upgrade
+    op.create_foreign_key(None, 'applicant_details', 'applications', ['application_id'], ['application_id'])
+  File "<string>", line 8, in create_foreign_key
+  File "<string>", line 3, in create_foreign_key
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\operations\ops.py", line 691, in create_foreign_key
+    return operations.invoke(op)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\operations\base.py", line 452, in invoke
+    return fn(self, operation)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\operations\toimpl.py", line 221, in create_constraint
+    operations.impl.add_constraint(
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\ddl\impl.py", line 423, in add_constraint
+    self._exec(schema.AddConstraint(const, **kw))
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\alembic\ddl\impl.py", line 256, in _exec
+    return conn.execute(construct, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\sql\ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\Vaibhav\AppData\Local\Programs\Python\Python311\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column "application_id" referenced in foreign key constraint does not exist
+
+[SQL: ALTER TABLE applicant_details ADD FOREIGN KEY(application_id) REFERENCES applications (application_id)]
+(Background on this error at: https://sqlalche.me/e/20/f405)

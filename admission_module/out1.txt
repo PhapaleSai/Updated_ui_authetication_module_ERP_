@@ -1,0 +1,55 @@
+Admission And Enrollment 
+Module Workflow : 
+ 
+applicant login to the system( from authentication module) 
+↓ 
+applicant choose course for Brochure_Request (academic module gives list of courses to select) 
+↓ 
+( here our role begins of admission module) 
+Brochure created, applicant get brochure and needs to pay 200rs fee for that 
+(after fee payment confirmation from fee module) 
+↓ 
+Application generated as per applicant selected course and brochure fee are Paid  
+↓ 
+Applicant fill all there details (personal, parents, educational, uploads documents required for 
+admission, like adhar, caste certificate, domicile, leaving/transfer certificate etc, all past  
+qualification result from 10th grade to required for current admission course) 
+↓ 
+Applicant submits admission form ( applicant needs to ensure all details were right ? after once 
+it get submit ,it can't change later anything in application, so applicant needs to check everything 
+is alright before submitting the form, applicant side is done) 
+↓ 
+Application_Review admin check the application after submitted by applicant (admin action 
+begins) 
+↓ 
+Admin requests correction or approves if needs, send back to the applicant and then 
+applicant can change the application form details because admin gives them permission to 
+change the application form 
+↓ 
+Admission_Fee need to pay to complete the admission process 
+↓ 
+Status updated in Application_Status 
+(Note: Each and every time when actions perform by the 'applicant' or 'admin', the process 'state' 
+they're working on needs to be seen in our system even when they filling details and also there 
+time when they modify or update anything ,also who change that information admin or applicant, 
+everything needs to be in record of our system.) 
+↓ 
+when all the details were filled right by applicant and fee's are paid by the applicant, get 
+everything tested by admin then 
+↓ 
+Enrollment created. 
+ 
+ 
+So,this is basically flow of admission and enrollment module. Use created_at, updated_at 
+timestamp for better traceability. And have clear understanding of every phase. 
+We need Application_Status (Which tracks full lifecycle of the process of admission like, 
+APP_INITIATED ,BROCHURE_SUBMITTED, APPLICATION_STARTED 
+,APPLICATION_SUBMITTED, UNDER_REVIEW, REVISION_REQUIRED, REJECTED 
+,APPROVED, every action needs to be get track and record in our system, Even when while 
+filling the details applicant can see there state and completion details! ) 
+ Also understand this- only focus on admission and enrollment module not in payments, 
+authentication, courses details, notification, student response system(SRS)  it's others module 
+work they'll go in depth of those concept we just need to create admission module in detail. 
+Other modules are just part of our flow and we need them. We have to create user side which is 
+applicant and admission side person which is admin. 
+ 
