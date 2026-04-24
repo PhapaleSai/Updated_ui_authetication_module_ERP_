@@ -29,6 +29,36 @@ def signup(student: schemas.StudentCreate, db: Session = Depends(get_db)):
         password_hash=get_password_hash(student.password),
     )
     db.add(new_student)
+    
+    # Auto-provision into new users table
+    existing_user = db.query(models.User).filter(models.User.username == student.username).first()
+    if not existing_user:
+        new_user = models.User(
+            username=student.username,
+            full_name=student.name,
+            email=f"{student.username}@pvg.ac.in",
+            password_hash=get_password_hash(student.password),
+            created_by="system",
+            created_from="signup"
+        )
+        db.add(new_user)
+        db.flush()
+        
+        student_role = db.query(models.Role).filter(models.Role.role_name == "Student").first()
+        if not student_role:
+            student_role = models.Role(role_name="Student", created_by="system", created_from="signup")
+            db.add(student_role)
+            db.flush()
+            
+        from datetime import datetime, timedelta
+        db.add(models.UserRole(
+            user_id=new_user.user_id,
+            role_id=student_role.role_id,
+            created_by="system",
+            created_from="signup",
+            token_expiry=datetime.utcnow() + timedelta(days=365)
+        ))
+        
     db.commit()
     db.refresh(new_student)
     

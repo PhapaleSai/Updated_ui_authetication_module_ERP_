@@ -36,6 +36,40 @@ def login(
         (models.User.username == form_data.username)
     ).first()
 
+    # JIT Migration: If not found in users, check legacy students table
+    if not user:
+        legacy_student = db.query(models.Student).filter(
+            models.Student.username == form_data.username
+        ).first()
+        if legacy_student and verify_password(form_data.password, legacy_student.password_hash):
+            user = models.User(
+                username=legacy_student.username,
+                full_name=legacy_student.name,
+                email=f"{legacy_student.username}@pvg.ac.in",
+                password_hash=legacy_student.password_hash,
+                created_by="migration",
+                created_from="legacy_login"
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            
+            student_role = db.query(models.Role).filter(models.Role.role_name == "Student").first()
+            if not student_role:
+                student_role = models.Role(role_name="Student", created_by="migration", created_from="legacy_login")
+                db.add(student_role)
+                db.commit()
+                db.refresh(student_role)
+                
+            db.add(models.UserRole(
+                user_id=user.user_id,
+                role_id=student_role.role_id,
+                created_by="migration",
+                created_from="legacy_login",
+                token_expiry=datetime.utcnow() + timedelta(days=365)
+            ))
+            db.commit()
+
     ip_address = request.client.host if request.client else "unknown"
     device_info = request.headers.get("user-agent", "unknown")
     now = datetime.utcnow()
