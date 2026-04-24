@@ -9,8 +9,8 @@ A professional-grade authentication, authorization, and administrative suite bui
 ## 🌟 Enhanced Enterprise Features
 
 1. **Dual-Portal Architecture**:
-   - **User Portal (`:5173`)**: Secure registration and profile management for students.
-   - **Admin Portal (`:5174`)**: High-performance dashboard for institutional oversight.
+   - **User Portal (`:5175`)**: Secure registration and profile management for students.
+   - **Admin Portal (`:5173`)**: High-performance dashboard for institutional oversight.
 
 2. **Enterprise Admin Dashboard**:
    - **Interactive Live Telemetry**: Real-time tracking of logins, registrations, and system events.
@@ -26,7 +26,7 @@ A professional-grade authentication, authorization, and administrative suite bui
 
 ## 🚀 Unified Quick Start
 
-Launch the entire ecosystem (5 Services: Backends + Frontend Portals) with a single command:
+Launch the entire ecosystem (3 Services: Backend + Frontend Portals) with a single command:
 
 ```powershell
 # Run the professional startup sequence
@@ -35,17 +35,14 @@ Launch the entire ecosystem (5 Services: Backends + Frontend Portals) with a sin
 
 This will automatically clean up ghost processes, free the required ports, and launch:
 1. **Auth Backend** (Port 8000)
-2. **Admission Backend** (Port 8001)
-3. **Authentication Admin Dashboard** (Port 5173)
-4. **Admission Portal** (Port 5174)
-5. **Student User Login/Profile** (Port 5175)
+2. **Authentication Admin Dashboard** (Port 5173)
+3. **Student User Login/Profile** (Port 5175)
 
 ---
 
 ### Your Dashboard Addresses:
 
 - **Authentication Admin (Users, Roles, RBAC)**: [http://localhost:5173](http://localhost:5173)
-- **Admission Portal (Applications, Brochures)**: [http://localhost:5174](http://localhost:5174)
 - **Student User Login (Personal Profile)**: [http://localhost:5175](http://localhost:5175)
 - **API Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
@@ -53,7 +50,7 @@ This will automatically clean up ghost processes, free the required ports, and l
 
 ## 🗄️ Database Architecture (PostgreSQL)
 
-The system uses a unified **PostgreSQL** database named `pvg_auth` to handle both authentication and the integrated admission module.
+The system uses a unified **PostgreSQL** database named `pvg_auth` to handle authentication.
 
 ### 1. Initialization Logic
 The core schema and security policies are defined in [setup_auth_tables.sql](file:///d:/Merging_auth_&_admission/setup_auth_tables.sql). This file performs:
@@ -71,7 +68,7 @@ The system follows a strict hierarchical permission model:
 ### 3. Core Tables Summary:
 - `users`: Stores emails and secure Argon2 password hashes.
 - `roles`: Institutional identities with unique descriptions.
-- `documents`: Tracks file paths, verification status, and ownership for the Admission module.
+
 - `login_log`: Real-time audit trail of all security events.
 
 ---
