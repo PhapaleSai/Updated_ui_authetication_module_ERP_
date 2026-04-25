@@ -364,8 +364,7 @@ const Dashboard = () => {
                                 </p>
                                 <button 
                                     onClick={() => {
-                                        const token = localStorage.getItem('admin_token');
-                                        window.location.href = `http://localhost:5174/admin/dashboard?token=${token}`;
+                                        window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}`;
                                     }}
                                     style={{ 
                                         width: '100%', padding: '1rem', borderRadius: '12px', border: 'none', 
@@ -522,7 +521,7 @@ const Dashboard = () => {
                             <button 
                                 onClick={() => {
                                     const token = localStorage.getItem('admin_token');
-                                    window.location.href = `http://localhost:5174/?token=${token}`;
+                                    window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/?token=${token}`;
                                 }}
                                 style={{ 
                                     width: '100%', padding: '1rem', borderRadius: '12px', border: 'none', 

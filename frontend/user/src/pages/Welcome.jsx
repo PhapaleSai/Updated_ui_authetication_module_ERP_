@@ -129,8 +129,7 @@ function Welcome() {
                             className="erp-btn" 
                             style={{ background: '#0c1e47', color: 'white', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
                             onClick={() => {
-                                const token = localStorage.getItem('token');
-                                window.location.href = `http://localhost:5174/?token=${token}`;
+                                window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}`;
                             }}
                         >
                             Enter Module <i className="fa-solid fa-arrow-right" style={{ marginLeft: '0.5rem' }}></i>

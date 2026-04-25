@@ -9,6 +9,9 @@ function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const params = new URLSearchParams(window.location.search);
+    const redirectUri = params.get('redirect_uri');
+
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -27,14 +30,19 @@ function Login() {
             });
             localStorage.setItem('token', res.data.access_token);
             
-            // Redirect based on role
-            const userRole = res.data.role;
-            if (['admin', 'vice_principal', 'hod', 'management'].includes(userRole)) {
-                // Instantly teleport Admin directly to Admission Admin Dashboard correctly
-                window.location.href = `http://localhost:5174/admin/dashboard?token=${res.data.access_token}`;
+            // Step 2: Automatic Redirect to the Admission Module if redirectUri exists
+            if (redirectUri) {
+                window.location.href = `${redirectUri}?user_id=${res.data.user_id}&name=${encodeURIComponent(res.data.full_name)}&role=${res.data.role}`;
             } else {
-                // Students/Applicants go directly to Admission Module frontend
-                window.location.href = `http://localhost:5174/?token=${res.data.access_token}`;
+                // Normal redirect based on role
+                const userRole = res.data.role;
+                if (['admin', 'vice_principal', 'hod', 'management'].includes(userRole)) {
+                    // Instantly teleport Admin directly to Admission Admin Dashboard correctly
+                    window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/admin/dashboard?token=${res.data.access_token}`;
+                } else {
+                    // Students/Applicants go directly to Admission Module frontend
+                    window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/?token=${res.data.access_token}`;
+                }
             }
         } catch (err) {
             setError(err.response?.data?.detail || 'Login failed. Check your credentials.');

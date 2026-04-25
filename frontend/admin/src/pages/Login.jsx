@@ -10,6 +10,9 @@ const Login = () => {
     const navigate = useNavigate();
     const { setUser } = useAuth();
 
+    const params = new URLSearchParams(window.location.search);
+    const redirectUri = params.get('redirect_uri');
+
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
@@ -38,10 +41,16 @@ const Login = () => {
                 permissions: data.permissions || [],
             }));
 
-            // Hard redirect — ensures AuthProvider re-initializes fresh with the new token
-            window.location.href = '/dashboard';
+            // Step 2: Automatic Redirect to the calling Module if redirectUri exists
+            if (redirectUri) {
+                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${data.role}`;
+            } else {
+                // Hard redirect — ensures AuthProvider re-initializes fresh with the new token
+                window.location.href = '/dashboard';
+            }
         } catch (err) {
             setError(err.response?.data?.detail || 'Invalid credentials. Please try again.');
+        } finally {
             setLoading(false);
         }
     };

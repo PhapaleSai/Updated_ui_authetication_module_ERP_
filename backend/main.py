@@ -16,8 +16,8 @@ app = FastAPI(
 # Allow React dev server and production nginx
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:5174"],
-    allow_credentials=True,
+    allow_origins=["*"], # Allowed all for easy localtunnel access
+    allow_credentials=False, # MUST be False when allow_origins is '*'
     allow_methods=["*"],
     allow_headers=["*"],
 )
