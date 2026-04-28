@@ -1,22 +1,18 @@
 @echo off
 echo ==============================================
-echo PVG Unified ERP - HYBRID Setup
+echo PVG Unified ERP - Dual Links Setup
 echo ==============================================
-echo FRONTEND - Ngrok
-echo BACKEND  - Localtunnel
+echo Since Ngrok Free Plan only allows 1 link, we are using a smart trick:
+echo 1. Ngrok will host your Backend (Port 8000)
+echo 2. LocalTunnel will host your Frontend (Port 5173)
 echo.
+echo Starting LocalTunnel for Frontend...
+start "LocalTunnel Frontend" cmd /k "npx localtunnel --port 5173"
 
-echo [1/2] Starting Localtunnel for BACKEND (Port 8000)...
-start "Tunnel Backend" cmd /k "lt --port 8000 --subdomain pvg-erp-backend-api --local-host 127.0.0.1"
-
-echo [2/2] Starting Ngrok for FRONTEND (Port 5173)...
-start "Ngrok Frontend" cmd /k ".\ngrok_bin\ngrok.exe http 5173"
+echo Starting Ngrok for Backend...
+start "Ngrok Backend" cmd /k ".\ngrok_bin\ngrok.exe http 8000"
 
 echo.
-echo ==============================================
-echo Tunnels opened!
-echo 1. Your Frontend is on the NEW NGROK window link!
-echo 2. Your Backend is permanently connected at:
-echo    https://pvg-erp-backend-api.loca.lt
+echo Check the two new black windows for your 2 SEPARATE links!
 echo ==============================================
 pause

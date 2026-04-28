@@ -118,12 +118,12 @@ const Dashboard = () => {
 
     const fetchData = useCallback(async () => {
         setLoading(true);
-        
+
         // Fetch stats independently for resilience
         api.get('/admin/stats').then(res => setStats(res.data)).catch(e => console.error('Stats fail:', e));
         api.get('/admin/audit').then(res => setAudit(res.data.slice(0, 6))).catch(e => console.error('Audit fail:', e));
         api.get(`/admin/telemetry?time_range=${telemetryRange}`).then(res => setTelemetry(res.data)).catch(e => console.error('Telemetry fail:', e));
-        
+
         // Minor delay to ensure smooth transition
         setTimeout(() => setLoading(false), 800);
     }, [telemetryRange]);
@@ -208,9 +208,9 @@ const Dashboard = () => {
                         </div>
 
                         {/* Glassmorphism Live Clock */}
-                        <div style={{ 
-                            background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(30px)', 
-                            borderRadius: '20px', padding: '1.5rem 2.5rem', textAlign: 'center', 
+                        <div style={{
+                            background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(30px)',
+                            borderRadius: '20px', padding: '1.5rem 2.5rem', textAlign: 'center',
                             border: '1px solid rgba(255,255,255,0.1)', minWidth: '240px',
                             boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
                         }}>
@@ -223,7 +223,7 @@ const Dashboard = () => {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '1.5rem', alignItems: 'start' }}>
-                    
+
                     {/* LEFT COLUMN */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
@@ -264,9 +264,9 @@ const Dashboard = () => {
                                             { label: '30D', value: '30d' }
                                         ].map(r => (
                                             <button key={r.value} onClick={() => setTelemetryRange(r.value)}
-                                                style={{ 
-                                                    background: telemetryRange === r.value ? 'white' : 'transparent', 
-                                                    color: telemetryRange === r.value ? 'var(--erp-primary)' : 'var(--erp-text-muted)', 
+                                                style={{
+                                                    background: telemetryRange === r.value ? 'white' : 'transparent',
+                                                    color: telemetryRange === r.value ? 'var(--erp-primary)' : 'var(--erp-text-muted)',
                                                     border: 'none', borderRadius: '10px', padding: '0.4rem 0.9rem', fontSize: '0.72rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s',
                                                     boxShadow: telemetryRange === r.value ? '0 4px 12px rgba(0,0,0,0.08)' : 'none'
                                                 }}>
@@ -280,8 +280,8 @@ const Dashboard = () => {
                                         <AreaChart data={telemetry.length ? telemetry : sparkData}>
                                             <defs>
                                                 <linearGradient id="pvgGradient" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="var(--erp-primary)" stopOpacity={0.15}/>
-                                                    <stop offset="95%" stopColor="var(--erp-primary)" stopOpacity={0}/>
+                                                    <stop offset="5%" stopColor="var(--erp-primary)" stopOpacity={0.15} />
+                                                    <stop offset="95%" stopColor="var(--erp-primary)" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="4 4" stroke="rgba(0,0,0,0.03)" vertical={false} />
@@ -320,17 +320,17 @@ const Dashboard = () => {
                             <div className="erp-card__body" style={{ padding: '0 1rem 1rem' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 1fr', gap: '1rem' }}>
                                     {audit.length > 0 ? audit.slice(0, 4).map((log, i) => (
-                                        <div key={i} style={{ 
-                                            background: 'rgba(0,0,0,0.02)', padding: '1.25rem', borderRadius: '20px', display: 'flex', gap: '1rem', alignItems: 'center', 
+                                        <div key={i} style={{
+                                            background: 'rgba(0,0,0,0.02)', padding: '1.25rem', borderRadius: '20px', display: 'flex', gap: '1rem', alignItems: 'center',
                                             border: '1px solid transparent', transition: 'all 0.3s'
                                         }} onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--erp-border)'; e.currentTarget.style.background = 'white'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)'; }}>
-                                            <div style={{ 
-                                                width: '46px', height: '46px', borderRadius: '14px', flexShrink: 0, 
+                                            <div style={{
+                                                width: '46px', height: '46px', borderRadius: '14px', flexShrink: 0,
                                                 background: log.status === 'Success' ? '#dcfce7' : '#fee2e2',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
                                             }}>
-                                                <i className={`fa-solid ${log.status === 'Success' ? 'fa-shield-check' : 'fa-triangle-exclamation'}`} 
-                                                   style={{ color: log.status === 'Success' ? '#16a34a' : '#ef4444', fontSize: '1.2rem' }}></i>
+                                                <i className={`fa-solid ${log.status === 'Success' ? 'fa-shield-check' : 'fa-triangle-exclamation'}`}
+                                                    style={{ color: log.status === 'Success' ? '#16a34a' : '#ef4444', fontSize: '1.2rem' }}></i>
                                             </div>
                                             <div style={{ minWidth: 0, flex: 1 }}>
                                                 <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{log.user}</div>
@@ -349,7 +349,7 @@ const Dashboard = () => {
 
                     {/* RIGHT COLUMN */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'sticky', top: '2rem' }}>
-                        
+
                         {/* Admission Module Admin Access */}
                         <div className="erp-card" style={{ borderRadius: '28px', overflow: 'hidden', border: 'none', background: 'linear-gradient(135deg, #0c1e47, #1e293b)', color: 'white' }}>
                             <div style={{ padding: '2rem' }}>
@@ -362,12 +362,12 @@ const Dashboard = () => {
                                 <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '2rem', lineHeight: 1.6 }}>
                                     Review student applications, verify uploaded documents, and manage admission approvals.
                                 </p>
-                                <button 
+                                <button
                                     onClick={() => {
-                                        window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}`;
+                                        window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${encodeURIComponent(user?.role || 'admin')}`;
                                     }}
-                                    style={{ 
-                                        width: '100%', padding: '1rem', borderRadius: '12px', border: 'none', 
+                                    style={{
+                                        width: '100%', padding: '1rem', borderRadius: '12px', border: 'none',
                                         background: 'white', color: '#0c1e47', fontWeight: 800, cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
                                         transition: 'all 0.2s'
@@ -518,13 +518,13 @@ const Dashboard = () => {
                             <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '2rem', lineHeight: 1.6 }}>
                                 Complete your registration, upload documents, and track application status.
                             </p>
-                            <button 
+                            <button
                                 onClick={() => {
                                     const token = localStorage.getItem('admin_token');
-                                    window.location.href = `https://f6d4-2409-40c2-101a-a39c-a93f-1be8-4725-5147.ngrok-free.app/?token=${token}`;
+                                    window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/?token=${token}`;
                                 }}
-                                style={{ 
-                                    width: '100%', padding: '1rem', borderRadius: '12px', border: 'none', 
+                                style={{
+                                    width: '100%', padding: '1rem', borderRadius: '12px', border: 'none',
                                     background: 'white', color: '#0c1e47', fontWeight: 800, cursor: 'pointer',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
                                     transition: 'all 0.2s'
@@ -583,7 +583,7 @@ const PremiumStatCard = ({ icon, color, value, label, trend, trendUp, onClick })
         </div>
         <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--erp-dark)', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{value}</div>
         <div style={{ fontWeight: 700, color: 'var(--erp-text-muted)', fontSize: '1rem' }}>{label}</div>
-        
+
         {/* Decorative Background Icon */}
         <i className={`fa-solid ${icon}`} style={{ position: 'absolute', right: '-1rem', bottom: '-1rem', fontSize: '7rem', color: color, opacity: 0.03, pointerEvents: 'none' }}></i>
     </div>

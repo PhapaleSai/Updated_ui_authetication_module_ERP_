@@ -65,10 +65,10 @@ const AdminDashboard = () => {
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button className="btn-logout" onClick={() => navigate('/welcome')} style={{ background: '#333' }}>Back to Home</button>
           <button className="btn-logout" onClick={() => {
-              const token = localStorage.getItem('token');
-              window.location.href = `http://localhost:5174/admin/dashboard?token=${token}`;
+            const token = localStorage.getItem('token');
+            window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/admin/dashboard?token=${token}`;
           }} style={{ background: '#4a9eff', color: '#fff', border: 'none', cursor: 'pointer' }}>
-              Launch Admission Admin <i className="fa-solid fa-arrow-right"></i>
+            Launch Admission Admin <i className="fa-solid fa-arrow-right"></i>
           </button>
         </div>
       </header>
@@ -87,8 +87,8 @@ const AdminDashboard = () => {
                   <span className={`badge ${user.role === 'admin' ? 'danger' : 'success'}`} style={{ fontSize: '0.7rem' }}>
                     {user.role}
                   </span>
-                  <select 
-                    value={user.role} 
+                  <select
+                    value={user.role}
                     onChange={(e) => handleRoleChange(user.user_id, e.target.value)}
                     style={{ background: '#222', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.8rem' }}
                   >
@@ -115,7 +115,8 @@ const AdminDashboard = () => {
         </TiltCard>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .dashboard-grid { animation: fadeIn 1s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         select:focus { outline: none; box-shadow: 0 0 5px rgba(255,255,255,0.2); }

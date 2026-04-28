@@ -12,22 +12,20 @@ import Roles from './pages/Roles';
 import Audit from './pages/Audit';
 import UserProfile from './pages/UserProfile';
 import Export from './pages/Export';
+import Welcome from './pages/student/Welcome';
 
 // AuthContext is imported from ./AuthContext.js
 
 function AuthProvider({ children }) {
-    // Pre-load from cache for instant render (no spinner flash)
-    const cachedUser = (() => {
-        try { return JSON.parse(localStorage.getItem('admin_user')); } catch { return null; }
-    })();
-
-    const [user, setUser] = useState(cachedUser);
-    const [loading, setLoading] = useState(!cachedUser); // skip loading if we have cache
+    const [user, setUser] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+    });
+    const [loading, setLoading] = useState(!localStorage.getItem('token'));
 
     useEffect(() => {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('token');
         if (!token) {
-            localStorage.removeItem('admin_user');
+            localStorage.removeItem('user');
             setUser(null);
             setLoading(false);
             return;
@@ -36,11 +34,11 @@ function AuthProvider({ children }) {
         api.get('/users/me')
             .then(res => {
                 setUser(res.data);
-                localStorage.setItem('admin_user', JSON.stringify(res.data));
+                localStorage.setItem('user', JSON.stringify(res.data));
             })
             .catch(() => {
-                localStorage.removeItem('admin_token');
-                localStorage.removeItem('admin_user');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 setUser(null);
             })
             .finally(() => setLoading(false));
@@ -48,8 +46,8 @@ function AuthProvider({ children }) {
 
     const logout = () => {
         api.post('/auth/logout').finally(() => {
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             setUser(null);
             window.location.href = '/login';
         });
@@ -72,7 +70,7 @@ function ProtectedRoute({ children, allowedRoles }) {
         </div>
     );
 
-    if (!localStorage.getItem('admin_token') || !user) {
+    if (!localStorage.getItem('token') || !user) {
         return <Navigate to="/login" replace />;
     }
 
@@ -153,171 +151,171 @@ function Layout({ children }) {
 
     return (
         <div className="erp-layout" style={{ display: 'flex', minHeight: '100vh', background: 'var(--erp-bg)' }}>
-        <aside className="erp-sidebar" style={{
-            background: 'linear-gradient(180deg, #0c1e47 0%, #0d2260 50%, #0c356a 100%)',
-            borderRight: '1px solid rgba(255,255,255,0.06)',
-            position: 'fixed', left: 0, top: 0, bottom: 0, width: '280px',
-            overflow: 'hidden', zIndex: 1000, display: 'flex', flexDirection: 'column'
-        }}>
-            {/* Decorative background circles */}
-            <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(26,86,219,0.15)', pointerEvents: 'none' }}></div>
-            <div style={{ position: 'absolute', bottom: '80px', left: '-40px', width: '140px', height: '140px', borderRadius: '50%', background: 'rgba(26,86,219,0.08)', pointerEvents: 'none' }}></div>
+            <aside className="erp-sidebar" style={{
+                background: 'linear-gradient(180deg, #0c1e47 0%, #0d2260 50%, #0c356a 100%)',
+                borderRight: '1px solid rgba(255,255,255,0.06)',
+                position: 'fixed', left: 0, top: 0, bottom: 0, width: '280px',
+                overflow: 'hidden', zIndex: 1000, display: 'flex', flexDirection: 'column'
+            }}>
+                {/* Decorative background circles */}
+                <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(26,86,219,0.15)', pointerEvents: 'none' }}></div>
+                <div style={{ position: 'absolute', bottom: '80px', left: '-40px', width: '140px', height: '140px', borderRadius: '50%', background: 'rgba(26,86,219,0.08)', pointerEvents: 'none' }}></div>
 
-            {/* Brand */}
-            <div className="erp-sidebar__brand" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '1.5rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{
-                    width: '40px', height: '40px', borderRadius: '12px',
-                    background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    overflow: 'hidden', flexShrink: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                }}>
-                    <img src="/assets/wordmark.jpg" alt="PVG Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {/* Brand */}
+                <div className="erp-sidebar__brand" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '1.5rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{
+                        width: '40px', height: '40px', borderRadius: '12px',
+                        background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        overflow: 'hidden', flexShrink: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                    }}>
+                        <img src="/assets/wordmark.jpg" alt="PVG Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="erp-sidebar__brand-text">
+                        <h2 style={{ color: 'white', margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>PVG COET&M</h2>
+                        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Campus Portal</span>
+                    </div>
                 </div>
-                <div className="erp-sidebar__brand-text">
-                    <h2 style={{ color: 'white', margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>PVG COET&M</h2>
-                    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Campus Portal</span>
-                </div>
-            </div>
 
-            {/* Nav */}
-            <nav className="erp-sidebar__nav" style={{ flex: 1, overflowY: 'auto', padding: '0 0.75rem' }}>
+                {/* Nav */}
+                <nav className="erp-sidebar__nav" style={{ flex: 1, overflowY: 'auto', padding: '0 0.75rem' }}>
 
-                {/* General */}
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '0.75rem 0.75rem 0.4rem', marginTop: '0.5rem' }}>
-                    General
-                </div>
-                <SidebarLink to="/dashboard" icon="fa-gauge-high" label="Dashboard" iconColor="#60a5fa" />
+                    {/* General */}
+                    <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '0.75rem 0.75rem 0.4rem', marginTop: '0.5rem' }}>
+                        General
+                    </div>
+                    <SidebarLink to="/dashboard" icon="fa-gauge-high" label="Dashboard" iconColor="#60a5fa" />
 
-                {isAdminRole && (
-                    <>
-                        <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
-                            Administration
-                        </div>
-                        {isSuperAdmin && (
-                            <>
-                                <SidebarLink to="/users" icon="fa-users" label="User Management" iconColor="#a78bfa" />
-                                <SidebarLink to="/roles" icon="fa-shield-halved" label="Roles & RBAC" iconColor="#34d399" />
-                            </>
-                        )}
-                        <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
-                            System
-                        </div>
-                        <SidebarLink to="/audit" icon="fa-clipboard-list" label="Audit Log" iconColor="#fbbf24" />
-                        <SidebarLink to="/export" icon="fa-file-export" label="Export Hub" iconColor="#f87171" />
-                        
-                        <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
-                            Integrations
-                        </div>
-                        <a href={`http://localhost:5174/admin/dashboard?token=${localStorage.getItem('admin_token')}`} style={{ textDecoration: 'none' }}>
-                            <div style={{
-                                display: 'flex', alignItems: 'center', gap: '0.75rem',
-                                padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '2px',
-                                background: 'rgba(255,255,255,0.05)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                cursor: 'pointer', transition: 'all 0.2s',
-                            }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'none'; }}
-                            >
-                                <div style={{
-                                    width: '30px', height: '30px', borderRadius: '8px', flexShrink: 0,
-                                    background: 'rgba(255,255,255,0.1)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                }}>
-                                    <i className="fa-solid fa-graduation-cap" style={{ fontSize: '0.8rem', color: '#fbbf24' }}></i>
-                                </div>
-                                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
-                                    Admission Module
-                                </span>
-                                <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
+                    {isAdminRole && (
+                        <>
+                            <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
+                                Administration
                             </div>
-                        </a>
-                    </>
-                )}
-            </nav>
+                            {isSuperAdmin && (
+                                <>
+                                    <SidebarLink to="/users" icon="fa-users" label="User Management" iconColor="#a78bfa" />
+                                    <SidebarLink to="/roles" icon="fa-shield-halved" label="Roles & RBAC" iconColor="#34d399" />
+                                </>
+                            )}
+                            <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
+                                System
+                            </div>
+                            <SidebarLink to="/audit" icon="fa-clipboard-list" label="Audit Log" iconColor="#fbbf24" />
+                            <SidebarLink to="/export" icon="fa-file-export" label="Export Hub" iconColor="#f87171" />
 
-            {/* User Footer */}
-            <div style={{
-                margin: '0.75rem', borderRadius: '16px',
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-                backdropFilter: 'blur(10px)', position: 'relative', zIndex: 1
-            }}>
+                            <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
+                                Integrations
+                            </div>
+                            <a href={`${import.meta.env.VITE_ADMISSION_URL}/admin/dashboard?token=${localStorage.getItem('token')}`} style={{ textDecoration: 'none' }}>
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', gap: '0.75rem',
+                                    padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '2px',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    cursor: 'pointer', transition: 'all 0.2s',
+                                }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateX(4px)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'none'; }}
+                                >
+                                    <div style={{
+                                        width: '30px', height: '30px', borderRadius: '8px', flexShrink: 0,
+                                        background: 'rgba(255,255,255,0.1)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <i className="fa-solid fa-graduation-cap" style={{ fontSize: '0.8rem', color: '#fbbf24' }}></i>
+                                    </div>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
+                                        Admission Module
+                                    </span>
+                                    <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
+                                </div>
+                            </a>
+                        </>
+                    )}
+                </nav>
+
+                {/* User Footer */}
                 <div style={{
-                    width: '38px', height: '38px', borderRadius: '12px', flexShrink: 0,
-                    background: 'linear-gradient(135deg, #1a56db, #8b5cf6)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'white', fontWeight: 800, fontSize: '1rem',
-                    boxShadow: '0 4px 12px rgba(26,86,219,0.4)'
+                    margin: '0.75rem', borderRadius: '16px',
+                    background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                    padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                    backdropFilter: 'blur(10px)', position: 'relative', zIndex: 1
                 }}>
-                    {user.username?.[0]?.toUpperCase()}
+                    <div style={{
+                        width: '38px', height: '38px', borderRadius: '12px', flexShrink: 0,
+                        background: 'linear-gradient(135deg, #1a56db, #8b5cf6)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'white', fontWeight: 800, fontSize: '1rem',
+                        boxShadow: '0 4px 12px rgba(26,86,219,0.4)'
+                    }}>
+                        {user.username?.[0]?.toUpperCase()}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ color: 'white', fontWeight: 700, fontSize: '0.85rem', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {user.username}
+                        </p>
+                        <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            {user.role}
+                        </span>
+                    </div>
+                    <button onClick={logout} title="Logout" style={{
+                        background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+                        borderRadius: '10px', width: '32px', height: '32px', cursor: 'pointer',
+                        color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', transition: 'all 0.2s', flexShrink: 0
+                    }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.2)'; e.currentTarget.style.color = '#f87171'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
+                    >
+                        <i className="fa-solid fa-right-from-bracket" style={{ fontSize: '0.8rem' }}></i>
+                    </button>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ color: 'white', fontWeight: 700, fontSize: '0.85rem', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {user.username}
-                    </p>
-                    <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        {user.role}
-                    </span>
-                </div>
-                <button onClick={logout} title="Logout" style={{
-                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: '10px', width: '32px', height: '32px', cursor: 'pointer',
-                    color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', transition: 'all 0.2s', flexShrink: 0
-                }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.2)'; e.currentTarget.style.color = '#f87171'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
-                >
-                    <i className="fa-solid fa-right-from-bracket" style={{ fontSize: '0.8rem' }}></i>
-                </button>
-            </div>
-        </aside>
+            </aside>
 
-        <div style={{ flex: 1, marginLeft: '280px', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <header className="erp-topbar" style={{
-                position: 'fixed', top: 0, right: 0, left: '280px', height: '60px',
-                background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(20px)',
-                borderBottom: '1px solid var(--erp-border)', zIndex: 900,
-                display: 'flex', alignItems: 'center', padding: '0', justifyContent: 'space-between'
-            }}>
-                <style>{`
+            <div style={{ flex: 1, marginLeft: '280px', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                <header className="erp-topbar" style={{
+                    position: 'fixed', top: 0, right: 0, left: '280px', height: '60px',
+                    background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(20px)',
+                    borderBottom: '1px solid var(--erp-border)', zIndex: 900,
+                    display: 'flex', alignItems: 'center', padding: '0', justifyContent: 'space-between'
+                }}>
+                    <style>{`
                     .erp-main { margin-left: 0 !important; padding: 0 !important; }
                     .erp-topbar { left: 280px !important; padding-left: 0 !important; }
                     .erp-topbar__btn { margin-left: 0 !important; }
                 `}</style>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button className="erp-topbar__btn" onClick={() => window.ERP?.Sidebar?.toggle?.()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--erp-text)', padding: '0 1rem' }}>
-                        <i className="fa-solid fa-bars"></i>
-                    </button>
-                    <nav className="erp-topbar__breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--erp-text-muted)' }}>
-                        <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 500 }}>Portal</Link>
-                        <i className="fa-solid fa-chevron-right" style={{ fontSize: '0.6rem', opacity: 0.5 }}></i>
-                        <span style={{ color: '#0c1e47', fontWeight: 700 }}>{getPageTitle()}</span>
-                    </nav>
-                </div>
-
-                <div className="erp-topbar__actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button
-                        className="erp-btn erp-btn--ghost erp-btn--sm"
-                        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        style={{ width: '40px', height: '40px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
-                    </button>
-                    <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
-                    <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate(`/users/${user.user_id}`)}>
-                        <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{user.username?.[0]?.toUpperCase()}</div>
-                        <span className="erp-topbar__user-name" style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.username}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <button className="erp-topbar__btn" onClick={() => window.ERP?.Sidebar?.toggle?.()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--erp-text)', padding: '0 1rem' }}>
+                            <i className="fa-solid fa-bars"></i>
+                        </button>
+                        <nav className="erp-topbar__breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--erp-text-muted)' }}>
+                            <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit', fontWeight: 500 }}>Portal</Link>
+                            <i className="fa-solid fa-chevron-right" style={{ fontSize: '0.6rem', opacity: 0.5 }}></i>
+                            <span style={{ color: '#0c1e47', fontWeight: 700 }}>{getPageTitle()}</span>
+                        </nav>
                     </div>
-                </div>
-            </header>
 
-            <main className="erp-main" style={{ flex: 1, paddingTop: '60px', padding: 0 }}>
-                <div className="erp-container" style={{ width: '100%', maxWidth: '100%', margin: '0', padding: 0 }}>
-                    {children}
-                </div>
-            </main>
-        </div>
+                    <div className="erp-topbar__actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <button
+                            className="erp-btn erp-btn--ghost erp-btn--sm"
+                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+                        </button>
+                        <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
+                        <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate(`/users/${user.user_id}`)}>
+                            <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{user.username?.[0]?.toUpperCase()}</div>
+                            <span className="erp-topbar__user-name" style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.username}</span>
+                        </div>
+                    </div>
+                </header>
+
+                <main className="erp-main" style={{ flex: 1, paddingTop: '60px', padding: 0 }}>
+                    <div className="erp-container" style={{ width: '100%', maxWidth: '100%', margin: '0', padding: 0 }}>
+                        {children}
+                    </div>
+                </main>
+            </div>
         </div>
     );
 }
@@ -328,6 +326,12 @@ function AppRoutes() {
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+
+            <Route path="/welcome" element={
+                <ProtectedRoute>
+                    <Welcome />
+                </ProtectedRoute>
+            } />
 
             <Route path="/dashboard" element={
                 <ProtectedRoute>
@@ -365,8 +369,8 @@ function AppRoutes() {
                 </ProtectedRoute>
             } />
 
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );
 }

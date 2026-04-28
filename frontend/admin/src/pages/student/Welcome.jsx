@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
-import TiltCard from '../components/TiltCard';
-import TypeWriter from '../components/TypeWriter';
-import JwtDisplay from '../components/JwtDisplay';
+import api from '../../api';
+import TiltCard from '../../components/TiltCard';
+import TypeWriter from '../../components/TypeWriter';
+import JwtDisplay from '../../components/JwtDisplay';
 
 function Welcome() {
     const navigate = useNavigate();

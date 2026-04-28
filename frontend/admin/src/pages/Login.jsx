@@ -22,17 +22,19 @@ const Login = () => {
         setError('');
         setLoading(true);
 
-        const formData = new FormData();
+        const formData = new URLSearchParams();
         formData.append('username', credentials.username);
         formData.append('password', credentials.password);
 
         try {
-            const response = await api.post('/auth/login', formData);
+            const response = await api.post('/auth/login', formData, {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
             const data = response.data;
 
             // Store token in localStorage
-            localStorage.setItem('admin_token', data.access_token);
-            localStorage.setItem('admin_user', JSON.stringify({
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user', JSON.stringify({
                 user_id: data.user_id,
                 username: data.username,
                 full_name: data.full_name,
@@ -43,10 +45,30 @@ const Login = () => {
 
             // Step 2: Automatic Redirect to the calling Module if redirectUri exists
             if (redirectUri) {
-                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${data.role}`;
+                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${encodeURIComponent(data.role)}`;
             } else {
-                // Hard redirect — ensures AuthProvider re-initializes fresh with the new token
-                window.location.href = '/dashboard';
+                // Unified Role-based Redirect
+                const role = data.role?.toLowerCase() || '';
+                const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
+                
+                if (staffRoles.includes(role)) {
+                    // Normalize role for SIS compatibility (Map high-level staff to 'admin')
+                    let sisRole = 'staff';
+                    const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
+                    if (adminRoles.includes(role)) {
+                        sisRole = 'admin';
+                    }
+                    // Rule 3: Staff redirect directly to SIS Module Callback
+                    window.location.href = `${import.meta.env.VITE_SIS_URL}/callback?user_id=${data.user_id}&role=${sisRole}`;
+                } else if (role === 'fees admin') {
+                    // Rule 4: Fees Admin teleportation (with SSO Token)
+                    window.location.href = `${import.meta.env.VITE_FEES_URL}/admin?token=${data.access_token}&user_id=${data.user_id}&role=admin&name=${encodeURIComponent(data.full_name)}`;
+                } else if (role === 'student' || role === 'students') {
+                    // Rules 1 & 2: Students go to Welcome page to choose between Admission and SIS
+                    window.location.href = '/welcome';
+                } else {
+                    window.location.href = '/dashboard';
+                }
             }
         } catch (err) {
             setError(err.response?.data?.detail || 'Invalid credentials. Please try again.');
