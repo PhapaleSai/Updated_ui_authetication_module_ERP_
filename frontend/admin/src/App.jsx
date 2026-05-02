@@ -205,7 +205,14 @@ function Layout({ children }) {
                             <div style={{ fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)', padding: '1rem 0.75rem 0.4rem' }}>
                                 Integrations
                             </div>
-                            <a href={`${import.meta.env.VITE_ADMISSION_URL}/admin/dashboard?token=${localStorage.getItem('token')}`} style={{ textDecoration: 'none' }}>
+                            <div 
+                                onClick={() => {
+                                    const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
+                                    const targetRole = adminRoles.includes(user?.role?.toLowerCase()) ? 'admin' : (user?.role || 'student');
+                                    window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${targetRole}`;
+                                }}
+                                style={{ textDecoration: 'none' }}
+                            >
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: '0.75rem',
                                     padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '2px',
@@ -228,7 +235,7 @@ function Layout({ children }) {
                                     </span>
                                     <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
                                 </div>
-                            </a>
+                            </div>
                         </>
                     )}
                 </nav>

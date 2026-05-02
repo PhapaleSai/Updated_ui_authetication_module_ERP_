@@ -44,8 +44,15 @@ const Login = () => {
             }));
 
             // Step 2: Automatic Redirect to the calling Module if redirectUri exists
-            if (redirectUri) {
-                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${encodeURIComponent(data.role)}`;
+            // EXCEPTION: Primary 'admin' always stays in the Auth Portal first
+            if (redirectUri && data.role?.toLowerCase() !== 'admin') {
+                // Normalize role for external modules (Admission/SIS/Fees)
+                let targetRole = data.role;
+                const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
+                if (adminRoles.includes(data.role?.toLowerCase())) {
+                    targetRole = 'admin';
+                }
+                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${targetRole}`;
             } else {
                 // Unified Role-based Redirect
                 const role = data.role?.toLowerCase() || '';

@@ -58,8 +58,15 @@ function Login() {
             localStorage.setItem('token', res.data.access_token);
 
             // Step 2: Automatic Redirect to the Admission Module if redirectUri exists
-            if (redirectUri) {
-                window.location.href = `${redirectUri}?user_id=${res.data.user_id}&name=${encodeURIComponent(res.data.full_name)}&role=${encodeURIComponent(res.data.role)}`;
+            // EXCEPTION: Primary 'admin' always stays in the Auth Portal first
+            if (redirectUri && res.data.role?.toLowerCase() !== 'admin') {
+                // Normalize role for external modules
+                let targetRole = res.data.role;
+                const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
+                if (adminRoles.includes(res.data.role?.toLowerCase())) {
+                    targetRole = 'admin';
+                }
+                window.location.href = `${redirectUri}?user_id=${res.data.user_id}&name=${encodeURIComponent(res.data.full_name)}&role=${targetRole}`;
             } else {
                 const role = res.data.role?.toLowerCase() || '';
                 const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];

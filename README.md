@@ -37,6 +37,34 @@ This will automatically clean up ghost processes, free the required ports, and l
 1. **Auth Backend** (Port 8000)
 2. **Authentication Admin Dashboard** (Port 5173)
 3. **Student User Login/Profile** (Port 5175)
+4. **SIS Module** (External Ngrok)
+5. **Admission Module** (External Ngrok)
+
+### 🛠️ Manual Execution (Step-by-Step)
+
+If you prefer to run services manually in separate terminals:
+
+**1. Start Backend API**
+```powershell
+cd backend
+.\venv\Scripts\activate
+# Use this command to avoid venv launcher errors
+python -m uvicorn main:app --port 8000 --reload
+```
+
+**2. Start Frontend Portals (Combined)**
+```powershell
+cd frontend
+npm run dev
+```
+*(This launches both Admin on :5173 and User on :5175 simultaneously)*
+
+**3. Start Ngrok Tunnels (For External Access)**
+```powershell
+# Run from the project root directory
+#PS D:\taking_my_code_out> .\run_both_ngrok.bat
+.\run_both_ngrok.bat
+```
 
 ---
 

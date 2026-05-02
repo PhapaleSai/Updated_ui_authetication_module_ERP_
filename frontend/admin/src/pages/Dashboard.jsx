@@ -364,7 +364,9 @@ const Dashboard = () => {
                                 </p>
                                 <button
                                     onClick={() => {
-                                        window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${encodeURIComponent(user?.role || 'admin')}`;
+                                        const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
+                                        const targetRole = adminRoles.includes(user?.role?.toLowerCase()) ? 'admin' : (user?.role || 'student');
+                                        window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${targetRole}`;
                                     }}
                                     style={{
                                         width: '100%', padding: '1rem', borderRadius: '12px', border: 'none',
@@ -375,7 +377,7 @@ const Dashboard = () => {
                                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)'; }}
                                     onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
                                 >
-                                    Admin Dashboard <i className="fa-solid fa-arrow-right"></i>
+                                    Enter Admission Admin Dashboard <i className="fa-solid fa-arrow-right"></i>
                                 </button>
                             </div>
                         </div>
