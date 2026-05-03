@@ -182,7 +182,7 @@ const Dashboard = () => {
                 {/* ── Premium Hero ── */}
                 <div style={{
                     marginBottom: '1.5rem', padding: '2.5rem',
-                    background: 'linear-gradient(135deg, #0c1e47 0%, #0d2260 50%, #0c356a 100%)',
+                    background: 'linear-gradient(135deg, var(--erp-primary-dark) 0%, var(--erp-primary) 100%)',
                     borderRadius: '24px', color: 'white', position: 'relative', overflow: 'hidden',
                     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
                     border: '1px solid rgba(255,255,255,0.05)'
@@ -203,7 +203,7 @@ const Dashboard = () => {
                                 {greeting}, Admin
                             </h1>
                             <p style={{ opacity: 0.6, fontSize: '1.1rem', fontWeight: 400, margin: 0, maxWidth: '600px', lineHeight: 1.6 }}>
-                                Welcome to the PVG COET&M Command Center. Your administrative oversight covers <strong>{stats?.total_users || 0} enrolled users</strong> across <strong>{stats?.total_roles || 0} active RBAC policies</strong>.
+                                Welcome to the PVG College of Science Command Center. Your administrative oversight covers <strong>{stats?.total_users || 0} enrolled users</strong> across <strong>{stats?.total_roles || 0} active RBAC policies</strong>.
                             </p>
                         </div>
 
@@ -350,37 +350,6 @@ const Dashboard = () => {
                     {/* RIGHT COLUMN */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'sticky', top: '2rem' }}>
 
-                        {/* Admission Module Admin Access */}
-                        <div className="erp-card" style={{ borderRadius: '28px', overflow: 'hidden', border: 'none', background: 'linear-gradient(135deg, #0c1e47, #1e293b)', color: 'white' }}>
-                            <div style={{ padding: '2rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '1.5rem' }}>
-                                    <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <i className="fa-solid fa-server" style={{ fontSize: '1.4rem', color: '#fbbf24' }}></i>
-                                    </div>
-                                    <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Admission Module</h3>
-                                </div>
-                                <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '2rem', lineHeight: 1.6 }}>
-                                    Review student applications, verify uploaded documents, and manage admission approvals.
-                                </p>
-                                <button
-                                    onClick={() => {
-                                        const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
-                                        const targetRole = adminRoles.includes(user?.role?.toLowerCase()) ? 'admin' : (user?.role || 'student');
-                                        window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${targetRole}`;
-                                    }}
-                                    style={{
-                                        width: '100%', padding: '1rem', borderRadius: '12px', border: 'none',
-                                        background: 'white', color: '#0c1e47', fontWeight: 800, cursor: 'pointer',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                                >
-                                    Enter Admission Admin Dashboard <i className="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
 
                         {/* Interactive Calendar */}
                         <div className="erp-card" style={{ borderRadius: '28px', overflow: 'hidden' }}>

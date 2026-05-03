@@ -23,7 +23,7 @@ def signup(student: schemas.StudentCreate, db: Session = Depends(get_db)):
     
     new_student = models.Student(
         name=student.name,
-        student_class=student.student_class,
+        email=student.email,
         phone=student.phone,
         username=student.username,
         password_hash=get_password_hash(student.password),
@@ -36,7 +36,7 @@ def signup(student: schemas.StudentCreate, db: Session = Depends(get_db)):
         new_user = models.User(
             username=student.username,
             full_name=student.name,
-            email=f"{student.username}@pvg.ac.in",
+            email=student.email,
             password_hash=get_password_hash(student.password),
             created_by="system",
             created_from="signup"
@@ -74,7 +74,7 @@ def login(payload: LegacyLoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Incorrect username or password")
     
     access_token = create_access_token({"sub": db_student.username})
-    return {"access_token": access_token}
+    return {"access_token": access_token, **db_student.__dict__}
 
 
 @router.get("/me", response_model=schemas.StudentOut)

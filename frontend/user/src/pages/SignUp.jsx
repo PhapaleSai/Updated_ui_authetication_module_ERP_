@@ -8,7 +8,7 @@ function SignUp() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
         name: '',
-        student_class: '',
+        email: '',
         phone: '',
         username: '',
         password: '',
@@ -27,7 +27,7 @@ function SignUp() {
         try {
             const res = await api.post('/signup', form);
             localStorage.setItem('token', res.data.access_token);
-            navigate('/welcome');
+            navigate('/welcome', { state: { user: res.data } });
         } catch (err) {
             setError(err.response?.data?.detail || 'Sign up failed. Please try again.');
         } finally {
@@ -38,11 +38,39 @@ function SignUp() {
     return (
         <div className="erp-auth-page">
             <div className="erp-auth-page__brand">
-                <img src="/assets/wordmark.jpg" alt="PVG Logo" style={{ maxWidth: '180px', marginBottom: '2rem', filter: 'brightness(0) invert(1)' }} />
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>PVG COET&M</h1>
-                <p style={{ fontSize: '1.2rem', opacity: 0.8 }}>Start your journey with Pune's premier engineering institute.</p>
-                <div style={{ marginTop: '3rem', opacity: 0.6, fontSize: '0.9rem' }}>
-                    &copy; {new Date().getFullYear()} Pune Vidyarthi Griha's COET&M
+                <div style={{ 
+                    width: '180px', 
+                    height: '180px', 
+                    background: 'white', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '1.5rem',
+                    marginBottom: '2rem',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                    border: '4px solid rgba(255,255,255,0.1)',
+                    zIndex: 2
+                }}>
+                    <img 
+                        src="/assets/pvg_logo.png" 
+                        alt="PVG Logo" 
+                        style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain'
+                        }} 
+                    />
+                </div>
+                <div style={{ zIndex: 2, textAlign: 'center' }}>
+                    <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>Portal.</h1>
+                    <p style={{ fontSize: '1.1rem', opacity: 0.7, marginTop: '1rem', fontWeight: 300, maxWidth: '300px' }}>
+                        Unified Student & Applicant Gateway for PVG College of Science
+                    </p>
+                </div>
+                
+                <div style={{ position: 'absolute', bottom: '3rem', opacity: 0.3, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em' }}>
+                    &copy; {new Date().getFullYear()} PUNE VIDYARTHI GRIHA
                 </div>
             </div>
 
@@ -74,17 +102,21 @@ function SignUp() {
 
                         <div className="erp-form-grid-2" style={{ gap: '1.5rem', marginBottom: '1.5rem' }}>
                             <div className="erp-form-group" style={{ marginBottom: 0 }}>
-                                <label htmlFor="student_class">Class / Year</label>
-                                <input
-                                    id="student_class"
-                                    type="text"
-                                    name="student_class"
-                                    className="erp-form-control"
-                                    placeholder="e.g. SY BSc"
-                                    value={form.student_class}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <label htmlFor="email">Email-id</label>
+                                <div style={{ position: 'relative' }}>
+                                    <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }}></i>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        className="erp-form-control"
+                                        style={{ paddingLeft: '2.8rem' }}
+                                        placeholder="user@example.com"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="erp-form-group" style={{ marginBottom: 0 }}>
                                 <label htmlFor="phone">Phone Number</label>

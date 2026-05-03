@@ -1,18 +1,18 @@
 :root {
   /* Premium Dark/Navy Palette */
-  --erp-bg: #f8fafc;
-  --erp-sidebar-bg: #0c1e47; /* Deeper Navy */
+  --erp-bg: #f4f6f9; /* Official Theme Background */
+  --erp-sidebar-bg: #1a56db; /* Official Theme Primary Blue */
   --erp-surface: #ffffff;
-  --erp-surface-alt: #f1f5f9;
-  --erp-border: #e2e8f0;
-  --erp-text: #1e293b;
-  --erp-text-muted: #64748b;
-  --erp-primary: #0f172a; /* Main accent */
-  --erp-accent: #3b82f6;
-  --erp-success: #10b981;
-  --erp-danger: #ef4444;
-  --erp-warning: #f59e0b;
-  --erp-glow-primary: rgba(15, 23, 42, 0.1);
+  --erp-surface-alt: #ffffff;
+  --erp-border: #d9dee6;
+  --erp-text: #444444;
+  --erp-text-muted: #707070;
+  --erp-primary: #1a56db;
+  --erp-accent: #60a5fa;
+  --erp-success: #28a745;
+  --erp-danger: #f52846;
+  --erp-warning: #ffc107;
+  --erp-glow-primary: rgba(26, 86, 219, 0.1);
   --sidebar-width: 280px;
 }
 
@@ -88,9 +88,7 @@ body {
 .app-container {
   display: flex;
   min-height: 100vh;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.05) 0px, transparent 50%);
+  background: var(--erp-bg); /* Clean, clear background */
 }
 
 .main-content {
@@ -112,7 +110,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 900;
-  background: rgba(6, 9, 18, 0.4);
+  background: #ffffff; /* White header from screenshot */
 }
 
 .header-user {
@@ -466,27 +464,19 @@ td {
 }
 
 .erp-auth-page__brand {
-    flex: 0 0 32%;
-    background: linear-gradient(180deg, #0c1e47 0%, #0d2260 50%, #0c356a 100%);
+    flex: 0 0 35%;
+    background: radial-gradient(circle at top left, #1e293b, #111827);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    padding: 3rem;
+    padding: 4rem;
     position: relative;
     overflow: hidden;
 }
 
-.erp-auth-page__brand::after {
-    content: '';
-    position: absolute;
-    bottom: -100px;
-    right: -100px;
-    width: 300px;
-    height: 300px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 50%;
-}
+/* Removed decorative shapes for a cleaner, minimal look */
 
 .erp-auth-page__form {
     flex: 1;
@@ -503,8 +493,14 @@ td {
     padding: 3.5rem;
     background: white;
     border-radius: 32px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
+    animation: authBoxIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authBoxIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .glass-effect {

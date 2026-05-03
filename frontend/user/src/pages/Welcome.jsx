@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api';
 import TiltCard from '../components/TiltCard';
 import TypeWriter from '../components/TypeWriter';
@@ -7,7 +7,8 @@ import JwtDisplay from '../components/JwtDisplay';
 
 function Welcome() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const location = useLocation();
+    const [user, setUser] = useState(location.state?.user || null);
     const [token] = useState(() => localStorage.getItem('token') || '');
 
     useEffect(() => {
@@ -55,14 +56,14 @@ function Welcome() {
 
     if (!user) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--erp-surface)' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--erp-bg)' }}>
                 <div className="erp-loader"></div>
             </div>
         );
     }
 
     return (
-        <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '3rem 1rem', color: '#1e293b' }}>
+        <div style={{ minHeight: '100vh', background: 'var(--erp-bg)', padding: '3rem 1rem', color: '#1e293b' }}>
             <div className="erp-container" style={{ maxWidth: '800px', margin: '0 auto' }}>
                 <div className="animate-premium" style={{
                     background: '#dcfce7', color: '#16a34a', padding: '1rem 1.5rem',

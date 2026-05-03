@@ -10,6 +10,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { setUser } = useAuth();
 
+
     const params = new URLSearchParams(window.location.search);
     const redirectUri = params.get('redirect_uri');
 
@@ -58,6 +59,19 @@ const Login = () => {
                 const role = data.role?.toLowerCase() || '';
                 const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
                 
+                const getModuleURL = (type) => {
+                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                    if (isLocal) {
+                        if (type === 'SIS') return 'http://localhost:5174';
+                        if (type === 'FEES') return 'http://localhost:5176';
+                        if (type === 'ADMISSION') return 'http://localhost:3000';
+                    }
+                    if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
+                    if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
+                    if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
+                    return '';
+                };
+
                 if (staffRoles.includes(role)) {
                     // Normalize role for SIS compatibility (Map high-level staff to 'admin')
                     let sisRole = 'staff';
@@ -66,13 +80,13 @@ const Login = () => {
                         sisRole = 'admin';
                     }
                     // Rule 3: Staff redirect directly to SIS Module Callback
-                    window.location.href = `${import.meta.env.VITE_SIS_URL}/callback?user_id=${data.user_id}&role=${sisRole}`;
+                    window.location.href = `${getModuleURL('SIS')}/callback?user_id=${data.user_id}&role=${sisRole}`;
                 } else if (role === 'fees admin') {
                     // Rule 4: Fees Admin teleportation (with SSO Token)
-                    window.location.href = `${import.meta.env.VITE_FEES_URL}/admin?token=${data.access_token}&user_id=${data.user_id}&role=admin&name=${encodeURIComponent(data.full_name)}`;
+                    window.location.href = `${getModuleURL('FEES')}/admin?token=${data.access_token}&user_id=${data.user_id}&role=admin&name=${encodeURIComponent(data.full_name)}`;
                 } else if (role === 'student' || role === 'students') {
-                    // Rules 1 & 2: Students go to Welcome page to choose between Admission and SIS
-                    window.location.href = '/welcome';
+                    // Rule: Students land on local profile/dashboard for now (SIS redirection disabled)
+                    window.location.href = '/dashboard';
                 } else {
                     window.location.href = '/dashboard';
                 }
@@ -87,36 +101,39 @@ const Login = () => {
     return (
         <div className="erp-auth-page">
             <div className="erp-auth-page__brand">
-                <div className="animate-premium" style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                    <div style={{ 
-                        width: '180px', 
-                        height: '180px', 
-                        background: 'white', 
-                        borderRadius: '50%', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        padding: '1.5rem',
-                        marginBottom: '2rem',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                        border: '4px solid rgba(255,255,255,0.1)'
-                    }}>
-                        <img 
-                            src="/assets/pvg_logo.png" 
-                            alt="PVG Logo" 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'contain'
-                            }} 
-                        />
-                    </div>
-                    <h1 style={{ fontSize: '3.5rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>Portal.</h1>
-                    <p style={{ fontSize: '1.25rem', opacity: 0.7, marginTop: '1rem', fontWeight: 300 }}>Unified Identity & Access Management for PVG COET&M</p>
-                    
-                    <div style={{ marginTop: 'auto', paddingTop: '4rem', opacity: 0.4, fontSize: '0.85rem', fontWeight: 500 }}>
-                        &copy; {new Date().getFullYear()} PUNE VIDYARTHI GRIHA
-                    </div>
+                <div style={{ 
+                    width: '180px', 
+                    height: '180px', 
+                    background: 'white', 
+                    borderRadius: '50%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '1.5rem',
+                    marginBottom: '2rem',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                    border: '4px solid rgba(255,255,255,0.1)',
+                    zIndex: 2
+                }}>
+                    <img 
+                        src="/assets/pvg_logo.png" 
+                        alt="PVG Logo" 
+                        style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain'
+                        }} 
+                    />
+                </div>
+                <div style={{ zIndex: 2, textAlign: 'center' }}>
+                    <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>Portal.</h1>
+                    <p style={{ fontSize: '1.1rem', opacity: 0.7, marginTop: '1rem', fontWeight: 300, maxWidth: '300px' }}>
+                        Unified Identity & Access Management for PVG College of Science
+                    </p>
+                </div>
+                
+                <div style={{ position: 'absolute', bottom: '3rem', opacity: 0.3, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em' }}>
+                    &copy; {new Date().getFullYear()} PUNE VIDYARTHI GRIHA
                 </div>
             </div>
 

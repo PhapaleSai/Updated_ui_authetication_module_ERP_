@@ -10,19 +10,19 @@
 
 :root {
   /* Premium Dark/Navy Palette */
-  --erp-bg: #f8fafc;
-  --erp-sidebar-bg: #0c1e47; /* Deeper Navy */
+  --erp-bg: #f4f6f9; /* Official Theme Background */
+  --erp-sidebar-bg: #1a56db; /* Official Theme Primary Blue */
   --erp-surface: #ffffff;
-  --erp-surface-alt: #f1f5f9;
-  --erp-border: #e2e8f0;
-  --erp-text: #1e293b;
-  --erp-text-muted: #64748b;
-  --erp-primary: #0f172a; /* Main accent */
-  --erp-accent: #3b82f6;
-  --erp-success: #10b981;
-  --erp-danger: #ef4444;
-  --erp-warning: #f59e0b;
-  --erp-glow-primary: rgba(15, 23, 42, 0.1);
+  --erp-surface-alt: #ffffff;
+  --erp-border: #d9dee6;
+  --erp-text: #444444;
+  --erp-text-muted: #707070;
+  --erp-primary: #1a56db;
+  --erp-accent: #60a5fa;
+  --erp-success: #28a745;
+  --erp-danger: #f52846;
+  --erp-warning: #ffc107;
+  --erp-glow-primary: rgba(26, 86, 219, 0.1);
   --sidebar-width: 280px;
 
   /* Legacy compatibility (to avoid breaking other pages immediately) */
@@ -58,17 +58,7 @@ body {
 }
 
 /* Noise texture overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 128px 128px;
-}
+/* Removed noise texture for a cleaner look */
 
 /* ═══════════════════════════════════════════════════
    PAGE LAYOUT
@@ -77,21 +67,24 @@ body::after {
 .erp-auth-page {
     display: flex;
     min-height: 100vh;
-    background: #f8fafc;
+    background: white;
     color: #1e293b;
 }
 
 .erp-auth-page__brand {
     flex: 0 0 35%;
-    background: linear-gradient(180deg, #0c1e47 0%, #0d2260 50%, #0c356a 100%);
+    background: linear-gradient(135deg, var(--erp-primary-dark) 0%, var(--erp-primary) 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    padding: 3rem;
+    padding: 4rem;
     position: relative;
     overflow: hidden;
 }
+
+/* Removed decorative shapes for a cleaner, minimal look */
 
 .erp-auth-page__form {
     flex: 1;
@@ -99,7 +92,7 @@ body::after {
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    background-image: radial-gradient(circle at 70% 30%, rgba(203, 213, 225, 0.2) 0%, transparent 70%);
+    background: white;
 }
 
 .erp-auth-box {
@@ -108,8 +101,14 @@ body::after {
     padding: 3.5rem;
     background: white;
     border-radius: 32px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
+    animation: authBoxIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authBoxIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .animate-premium {

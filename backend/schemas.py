@@ -145,7 +145,7 @@ class UserOut(BaseModel):
 
 class StudentCreate(BaseModel):
     name: str
-    student_class: str
+    email: EmailStr
     phone: str
     username: str
     password: str
@@ -159,7 +159,7 @@ class Token(BaseModel):
 class StudentOut(BaseModel):
     id: int
     name: str
-    student_class: str
+    email: Optional[str] = None
     phone: str
     username: str
 
