@@ -3,10 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import ErrorBoundary from './ErrorBoundary'
-import 'college-erp-theme/css'
-import 'college-erp-theme/colleges/pvg/config.css'
-import 'college-erp-theme/js'
-import './base.css'
+import './index.css'
 
 // Apply theme immediately before React renders to prevent black flash
 const savedTheme = localStorage.getItem('admin_theme') || 'light';

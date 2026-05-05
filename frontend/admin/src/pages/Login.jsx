@@ -153,19 +153,20 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username">Identity ID</label>
+                            <label htmlFor="username">REGISTERED EMAIL-ID</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-id-card" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="username"
-                                    type="text"
+                                    type="email"
                                     name="username"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
-                                    placeholder="admin"
+                                    placeholder="Your registered email address"
                                     value={credentials.username}
                                     onChange={handleChange}
                                     required
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
@@ -198,7 +199,7 @@ const Login = () => {
                                 borderRadius: '16px',
                                 fontSize: '1.1rem',
                                 fontWeight: 700,
-                                background: '#0c1e47',
+                                background: 'var(--erp-primary)',
                                 color: 'white'
                             }} 
                             disabled={loading}
@@ -209,7 +210,7 @@ const Login = () => {
 
                     <div className="erp-auth-box__footer" style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '0.9rem' }}>
                         <span style={{ opacity: 0.6 }}>New to the portal?</span> {' '}
-                        <Link to="/signup" style={{ color: '#0c1e47', fontWeight: 700, textDecoration: 'none' }}>Create Account</Link>
+                        <Link to="/signup" style={{ color: 'var(--erp-primary)', fontWeight: 700, textDecoration: 'none' }}>Create Account</Link>
                     </div>
                 </div>
             </div>

@@ -30,22 +30,21 @@ def login(
     """
     Authenticate a user.
     """
-    # Search by email OR username
+    # Search strictly by email
     user = db.query(models.User).filter(
-        (models.User.email == form_data.username) | 
-        (models.User.username == form_data.username)
+        models.User.email == form_data.username
     ).first()
 
-    # JIT Migration: If not found in users, check legacy students table
+    # JIT Migration: If not found in users, check legacy students table strictly by email
     if not user:
         legacy_student = db.query(models.Student).filter(
-            models.Student.username == form_data.username
+            models.Student.email == form_data.username
         ).first()
         if legacy_student and verify_password(form_data.password, legacy_student.password_hash):
             user = models.User(
                 username=legacy_student.username,
                 full_name=legacy_student.name,
-                email=f"{legacy_student.username}@pvg.ac.in",
+                email=legacy_student.email,
                 password_hash=legacy_student.password_hash,
                 created_by="migration",
                 created_from="legacy_login"
@@ -89,7 +88,7 @@ def login(
 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username/email or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -120,7 +119,8 @@ def login(
     access_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={
-            "sub": user.email, 
+            "sub": user.email,
+            "email": user.email,
             "role": primary_role,
             "user_id": user.user_id,
             "username": user.username,
@@ -287,7 +287,8 @@ def refresh_token(payload: schemas.TokenRefreshRequest, db: Session = Depends(ge
     access_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     new_access_token = create_access_token(
         data={
-            "sub": user.email, 
+            "sub": user.email,
+            "email": user.email,
             "role": primary_role,
             "user_id": user.user_id,
             "username": user.username,

@@ -102,12 +102,10 @@ function Layout({ children }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const [theme, setTheme] = useState(localStorage.getItem('admin_theme') || 'light');
-
     useEffect(() => {
-        document.documentElement.setAttribute('data-erp-theme', theme);
-        localStorage.setItem('admin_theme', theme);
-    }, [theme]);
+        document.documentElement.setAttribute('data-erp-theme', 'light');
+        localStorage.setItem('admin_theme', 'light');
+    }, []);
 
     if (!user) return null;
 
@@ -157,40 +155,68 @@ function Layout({ children }) {
                             <SidebarLink to="/audit" icon="fa-clipboard-list" label="Audit Log" />
                             <SidebarLink to="/export" icon="fa-file-export" label="Export Hub" />
 
-                            <div className="erp-nav-label">Integrations</div>
-                            <div
-                                onClick={() => {
-                                    const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
-                                    const targetRole = adminRoles.includes(user?.role?.toLowerCase()) ? 'admin' : (user?.role || 'student');
-                                    window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/callback?user_id=${user?.user_id || ''}&name=${encodeURIComponent(user?.full_name || '')}&role=${targetRole}`;
-                                }}
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <div style={{
-                                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                                    padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '2px',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid rgba(255,255,255,0.08)',
-                                    cursor: 'pointer', transition: 'all 0.2s',
-                                }}
-                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'none'; }}
-                                >
-                                    <div style={{
-                                        width: '30px', height: '30px', borderRadius: '8px', flexShrink: 0,
-                                        background: 'rgba(255,255,255,0.1)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    }}>
-                                        <i className="fa-solid fa-graduation-cap" style={{ fontSize: '0.8rem', color: '#fbbf24' }}></i>
-                                    </div>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
-                                        Admission Module
-                                    </span>
-                                    <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
-                                </div>
-                            </div>
                         </>
                     )}
+
+                    <div className="erp-nav-label">Integrations</div>
+                            {(() => {
+                                const getModuleURL = (type) => {
+                                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                                    if (isLocal) {
+                                        if (type === 'ADMISSION') return 'http://localhost:3000';
+                                        if (type === 'SIS') return 'http://localhost:5174';
+                                        if (type === 'FEES') return 'http://localhost:5176';
+                                        if (type === 'PLACEMENT') return 'http://localhost:5177';
+                                    }
+                                    if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
+                                    if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
+                                    if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
+                                    if (type === 'PLACEMENT') return import.meta.env.VITE_PLACEMENT_URL;
+                                    return '';
+                                };
+                                const uid = user?.user_id || '';
+                                const name = encodeURIComponent(user?.full_name || user?.username || '');
+                                const isAdmin = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'].includes(user?.role?.toLowerCase());
+                                const roleParam = isAdmin ? 'admin' : (user?.role || 'staff');
+                                
+                                const modules = [
+                                    { key: 'ADMISSION', label: 'Admission Module', icon: 'fa-graduation-cap', iconColor: '#fbbf24', href: `${getModuleURL('ADMISSION')}/callback?user_id=${uid}&name=${name}&role=${roleParam}` },
+                                    { key: 'SIS', label: 'SIS Module', icon: 'fa-book-open', iconColor: '#60a5fa', href: `${getModuleURL('SIS')}/callback?user_id=${uid}&role=${roleParam}` },
+                                    { key: 'FEES', label: 'Fees Module', icon: 'fa-indian-rupee-sign', iconColor: '#34d399', href: `${getModuleURL('FEES')}/admin?token=${localStorage.getItem('token')}&user_id=${uid}&role=${roleParam}&name=${name}` },
+                                    { key: 'PLACEMENT', label: 'Placement Module', icon: 'fa-briefcase', iconColor: '#a78bfa', href: `${getModuleURL('PLACEMENT')}/callback?user_id=${uid}&role=${roleParam}` },
+                                ];
+
+                                return modules.map(m => (
+                                    <div
+                                        key={m.key}
+                                        onClick={() => window.location.href = m.href}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <div style={{
+                                            display: 'flex', alignItems: 'center', gap: '0.75rem',
+                                            padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '4px',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            cursor: 'pointer', transition: 'all 0.2s',
+                                        }}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateX(4px)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'none'; }}
+                                        >
+                                            <div style={{
+                                                width: '30px', height: '30px', borderRadius: '8px', flexShrink: 0,
+                                                background: 'rgba(255,255,255,0.1)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            }}>
+                                                <i className={`fa-solid ${m.icon}`} style={{ fontSize: '0.8rem', color: m.iconColor }}></i>
+                                            </div>
+                                            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
+                                                {m.label}
+                                            </span>
+                                            <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
+                                        </div>
+                                    </div>
+                                ));
+                            })()}
                 </nav>
 
                 {/* User Footer */}
@@ -222,75 +248,8 @@ function Layout({ children }) {
                     </div>
 
                     <div className="erp-topbar__actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        {/* ── Module Quick-Launch Buttons (Admin only) ── */}
-                        {['admin', 'it admins', 'principal', 'principals & vice principals', 'hod', 'vice_principal'].includes(user?.role?.toLowerCase()) && (() => {
-                            const getModuleURL = (type) => {
-                                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                                if (isLocal) {
-                                    if (type === 'ADMISSION') return 'http://localhost:3000';
-                                    if (type === 'SIS') return 'http://localhost:5174';
-                                    if (type === 'FEES') return 'http://localhost:5176';
-                                }
-                                if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
-                                if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
-                                if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
-                                return '';
-                            };
-                            const uid = user?.user_id || '';
-                            const name = encodeURIComponent(user?.full_name || user?.username || '');
-                            const isAdmin = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'].includes(user?.role?.toLowerCase());
-                            const roleParam = isAdmin ? 'admin' : (user?.role || 'staff');
-                            const modules = [
-                                { key: 'ADMISSION', label: 'Admission', icon: 'fa-graduation-cap', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', shadow: '#f59e0b', href: `${getModuleURL('ADMISSION')}/callback?user_id=${uid}&name=${name}&role=${roleParam}` },
-                                { key: 'SIS', label: 'SIS', icon: 'fa-book-open', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', shadow: '#3b82f6', href: `${getModuleURL('SIS')}/callback?user_id=${uid}&role=${roleParam}` },
-                                { key: 'FEES', label: 'Fees', icon: 'fa-indian-rupee-sign', gradient: 'linear-gradient(135deg, #10b981, #059669)', shadow: '#10b981', href: `${getModuleURL('FEES')}/admin?token=${localStorage.getItem('token')}&user_id=${uid}&role=admin&name=${name}` },
-                            ];
-                            return modules.map(m => (
-                                <a
-                                    key={m.key}
-                                    href={m.href}
-                                    style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                                        padding: '0.5rem 1.1rem', borderRadius: '22px',
-                                        background: m.gradient,
-                                        color: '#fff', fontSize: '0.8rem', fontWeight: 700,
-                                        textDecoration: 'none',
-                                        boxShadow: `0 4px 16px ${m.shadow}50`,
-                                        transition: 'transform 0.18s ease, box-shadow 0.18s ease',
-                                        letterSpacing: '0.025em',
-                                        whiteSpace: 'nowrap',
-                                        userSelect: 'none'
-                                    }}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-                                        e.currentTarget.style.boxShadow = `0 8px 24px ${m.shadow}70`;
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.transform = 'none';
-                                        e.currentTarget.style.boxShadow = `0 4px 16px ${m.shadow}50`;
-                                    }}
-                                >
-                                    <span style={{
-                                        width: '20px', height: '20px', borderRadius: '50%',
-                                        background: 'rgba(255,255,255,0.25)',
-                                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                                        flexShrink: 0
-                                    }}>
-                                        <i className={`fa-solid ${m.icon}`} style={{ fontSize: '0.65rem' }}></i>
-                                    </span>
-                                    {m.label}
-                                </a>
-                            ));
-                        })()}
+                        {/* Removed Topbar Quick-Launch buttons - moved to sidebar */}
 
-                        <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
-                        <button
-                            className="erp-btn erp-btn--ghost erp-btn--sm"
-                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                            style={{ width: '36px', height: '36px', padding: 0, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                            <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
-                        </button>
                         <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
                         <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate(`/users/${user.user_id}`)}>
                             <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{user.username?.[0]?.toUpperCase()}</div>

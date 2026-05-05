@@ -377,18 +377,18 @@ const Dashboard = () => {
                         </div>
 
                         {/* System Health Card */}
-                        <div className="erp-card" style={{ borderRadius: '28px', background: 'linear-gradient(135deg, #1e293b, #0f172a)', color: 'white', padding: '2rem', border: 'none', position: 'relative', overflow: 'hidden' }}>
-                            <div style={{ position: 'absolute', top: '-20%', right: '-20%', width: '150px', height: '150px', background: '#3b82f6', filter: 'blur(60px)', opacity: 0.3 }}></div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                        <div className="erp-card" style={{ borderRadius: '28px', background: 'var(--erp-dark)', color: 'white', padding: '2rem', border: 'none', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ position: 'absolute', top: '-20%', right: '-20%', width: '150px', height: '150px', background: 'var(--erp-primary)', filter: 'blur(60px)', opacity: 0.5 }}></div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }}>
                                 <div>
                                     <div style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '0.25rem' }}>Node Status</div>
                                     <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Infrastructure Monitor</div>
                                 </div>
-                                <div style={{ padding: '0.5rem', background: 'rgba(74, 222, 128, 0.1)', color: '#4ade80', borderRadius: '10px', fontSize: '0.9rem' }}>
+                                <div style={{ padding: '0.5rem', background: 'rgba(255, 255, 255, 0.1)', color: 'var(--erp-accent)', borderRadius: '10px', fontSize: '0.9rem' }}>
                                     <i className="fa-solid fa-bolt-lightning"></i>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
                                 {[
                                     { name: 'Auth Server', status: 'Healthy', val: 99 },
                                     { name: 'RBAC Engine', status: 'Healthy', val: 100 },
@@ -400,7 +400,7 @@ const Dashboard = () => {
                                             <span style={{ color: '#4ade80' }}>{s.status}</span>
                                         </div>
                                         <div style={{ background: 'rgba(255,255,255,0.05)', height: '4px', borderRadius: '2px' }}>
-                                            <div style={{ background: 'linear-gradient(to right, #3b82f6, #8b5cf6)', width: `${s.val}%`, height: '100%', borderRadius: '2px' }}></div>
+                                            <div style={{ background: 'linear-gradient(to right, var(--erp-primary), var(--erp-primary-light))', width: `${s.val}%`, height: '100%', borderRadius: '2px' }}></div>
                                         </div>
                                     </div>
                                 ))}
@@ -417,7 +417,7 @@ const Dashboard = () => {
         <div style={{ animation: 'fadeInSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
             <div style={{
                 marginBottom: '2rem', padding: '3rem',
-                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                background: 'linear-gradient(135deg, var(--erp-primary-dark) 0%, var(--erp-primary) 100%)',
                 borderRadius: '32px', color: 'white', position: 'relative', overflow: 'hidden',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.3)'
             }}>
@@ -431,7 +431,7 @@ const Dashboard = () => {
                     </div>
                     <div>
                         <div style={{ fontSize: '1rem', opacity: 0.6, marginBottom: '0.5rem', fontWeight: 500 }}>{greeting}</div>
-                        <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 0.5rem', letterSpacing: '-0.03em' }}>
+                        <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 0.5rem', letterSpacing: '-0.03em', textTransform: 'capitalize' }}>
                             {user?.full_name || user?.username}
                         </h1>
                         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
@@ -478,35 +478,7 @@ const Dashboard = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    <div className="erp-card" style={{ borderRadius: '28px', overflow: 'hidden', border: 'none' }}>
-                        <div style={{ padding: '2rem', background: 'linear-gradient(135deg, #0c1e47, #1e293b)', color: 'white' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '1.5rem' }}>
-                                <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <i className="fa-solid fa-graduation-cap" style={{ fontSize: '1.4rem', color: '#fbbf24' }}></i>
-                                </div>
-                                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Admission Portal</h3>
-                            </div>
-                            <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '2rem', lineHeight: 1.6 }}>
-                                Complete your registration, upload documents, and track application status.
-                            </p>
-                            <button
-                                onClick={() => {
-                                    const token = localStorage.getItem('admin_token');
-                                    window.location.href = `${import.meta.env.VITE_ADMISSION_URL}/?token=${token}`;
-                                }}
-                                style={{
-                                    width: '100%', padding: '1rem', borderRadius: '12px', border: 'none',
-                                    background: 'white', color: '#0c1e47', fontWeight: 800, cursor: 'pointer',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                                    transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                            >
-                                Enter Module <i className="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
+
                     <div className="erp-card" style={{ borderRadius: '28px' }}>
                         <div style={{ padding: '1.5rem 2rem 0', fontWeight: 800, fontSize: '0.9rem', borderBottom: '1px solid var(--erp-border)', paddingBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             <div style={{ width: '36px', height: '36px', background: 'rgba(26,86,219,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
