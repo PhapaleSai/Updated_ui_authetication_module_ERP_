@@ -360,7 +360,7 @@ a:hover { color: var(--erp-primary-dark); }
   transition: left var(--erp-transition);
 }
 
-.erp-sidebar--collapsed ~ .erp-topbar { left: 64px; }
+.erp-sidebar--collapsed + .erp-content .erp-topbar { left: 64px; }
 
 .erp-topbar__breadcrumb {
   display: flex; align-items: center; gap: 6px;
@@ -433,7 +433,7 @@ a:hover { color: var(--erp-primary-dark); }
   transition: margin-left var(--erp-transition);
 }
 
-.erp-sidebar--collapsed ~ .erp-main { margin-left: 64px; }
+.erp-sidebar--collapsed + .erp-content .erp-main { margin-left: 64px; }
 
 .erp-page-title { margin-bottom: 24px; }
 

@@ -167,11 +167,13 @@ function Layout({ children }) {
                                         if (type === 'SIS') return 'http://localhost:5174';
                                         if (type === 'FEES') return 'http://localhost:5176';
                                         if (type === 'PLACEMENT') return 'http://localhost:5177';
+                                        if (type === 'TIMETABLE') return 'http://localhost:5178';
                                     }
                                     if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
                                     if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
                                     if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
                                     if (type === 'PLACEMENT') return import.meta.env.VITE_PLACEMENT_URL;
+                                    if (type === 'TIMETABLE') return import.meta.env.VITE_TIMETABLE_URL;
                                     return '';
                                 };
                                 const uid = user?.user_id || '';
@@ -184,6 +186,7 @@ function Layout({ children }) {
                                     { key: 'SIS', label: 'SIS Module', icon: 'fa-book-open', iconColor: '#60a5fa', href: `${getModuleURL('SIS')}/callback?user_id=${uid}&role=${roleParam}` },
                                     { key: 'FEES', label: 'Fees Module', icon: 'fa-indian-rupee-sign', iconColor: '#34d399', href: `${getModuleURL('FEES')}/admin?token=${localStorage.getItem('token')}&user_id=${uid}&role=${roleParam}&name=${name}` },
                                     { key: 'PLACEMENT', label: 'Placement Module', icon: 'fa-briefcase', iconColor: '#a78bfa', href: `${getModuleURL('PLACEMENT')}/callback?user_id=${uid}&role=${roleParam}` },
+                                    { key: 'TIMETABLE', label: 'TimeTable Module', icon: 'fa-calendar-days', iconColor: '#f472b6', href: `${getModuleURL('TIMETABLE')}/callback?user_id=${uid}&role=${roleParam}` },
                                 ];
 
                                 return modules.map(m => (
@@ -192,7 +195,7 @@ function Layout({ children }) {
                                         onClick={() => window.location.href = m.href}
                                         style={{ textDecoration: 'none' }}
                                     >
-                                        <div style={{
+                                        <div className="erp-nav-item" style={{
                                             display: 'flex', alignItems: 'center', gap: '0.75rem',
                                             padding: '0.6rem 0.75rem', borderRadius: '12px', marginBottom: '4px',
                                             background: 'rgba(255,255,255,0.05)',
@@ -209,10 +212,10 @@ function Layout({ children }) {
                                             }}>
                                                 <i className={`fa-solid ${m.icon}`} style={{ fontSize: '0.8rem', color: m.iconColor }}></i>
                                             </div>
-                                            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
+                                            <span className="erp-nav-item__text" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
                                                 {m.label}
                                             </span>
-                                            <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
+                                            <i className="fa-solid fa-arrow-up-right-from-square erp-nav-item__text" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}></i>
                                         </div>
                                     </div>
                                 ));
