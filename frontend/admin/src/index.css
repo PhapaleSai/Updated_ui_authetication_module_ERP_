@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 /*
  * College ERP — Shared Theme Stylesheet
  * Version: 1.1.0
@@ -930,7 +931,7 @@ textarea.erp-form-control         { height: auto; min-height: var(--erp-textarea
  * blocking error page if it is missing or empty.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 
 :root {
   /* ── Required: identifies this college to erp-theme.js ── */

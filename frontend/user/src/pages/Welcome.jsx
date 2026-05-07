@@ -36,21 +36,41 @@ function Welcome() {
 
     const handleEnterAdmission = () => {
         const ADMISSION_CALLBACK_URL = `${import.meta.env.VITE_ADMISSION_URL}/callback`;
-        if (!user || !user.user_id) {
-            console.error("User session missing.");
-            return;
-        }
-        const redirectUrl = `${ADMISSION_CALLBACK_URL}?user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${ADMISSION_CALLBACK_URL}?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
         window.location.href = redirectUrl;
     };
 
     const handleEnterSIS = () => {
         const SIS_CALLBACK_URL = `${import.meta.env.VITE_SIS_URL}/callback`;
-        if (!user || !user.user_id) {
-            console.error("User session missing.");
-            return;
-        }
-        const redirectUrl = `${SIS_CALLBACK_URL}?user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${SIS_CALLBACK_URL}?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
+    const handleEnterNotification = () => {
+        const NOTIFICATION_URL = import.meta.env.VITE_NOTIFICATION_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${NOTIFICATION_URL}/login.html?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
+    const handleEnterAlumni = () => {
+        const ALUMNI_URL = import.meta.env.VITE_ALUMNI_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${ALUMNI_URL}?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
+    const handleEnterAcademic = () => {
+        const ACADEMIC_URL = import.meta.env.VITE_ACADEMIC_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${ACADEMIC_URL}/callback?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
         window.location.href = redirectUrl;
     };
 
@@ -171,6 +191,44 @@ function Welcome() {
                             onClick={handleEnterAdmission}
                         >
                             Enter Admission Module <i className="fa-solid fa-arrow-right" style={{ marginLeft: '0.5rem' }}></i>
+                        </button>
+                    </div>
+
+
+
+                    <div style={{
+                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Alumni Module</div>
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Stay connected with our global network of graduates.</div>
+                        </div>
+                        <button
+                            className="erp-btn"
+                            style={{ background: '#2dd4bf', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                            onClick={handleEnterAlumni}
+                        >
+                            Enter Alumni Module <i className="fa-solid fa-users-rectangle" style={{ marginLeft: '0.5rem' }}></i>
+                        </button>
+                    </div>
+
+                    <div style={{
+                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Academic Module</div>
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Manage your courses, curriculum, and academic progress.</div>
+                        </div>
+                        <button
+                            className="erp-btn"
+                            style={{ background: '#fb7185', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                            onClick={handleEnterAcademic}
+                        >
+                            Enter Academic Module <i className="fa-solid fa-book" style={{ marginLeft: '0.5rem' }}></i>
                         </button>
                     </div>
                 </div>

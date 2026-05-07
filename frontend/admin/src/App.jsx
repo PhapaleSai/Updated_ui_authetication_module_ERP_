@@ -168,26 +168,36 @@ function Layout({ children }) {
                                         if (type === 'FEES') return 'http://localhost:5176';
                                         if (type === 'PLACEMENT') return 'http://localhost:5177';
                                         if (type === 'TIMETABLE') return 'http://localhost:5178';
+                                        if (type === 'NOTIFICATION') return 'http://localhost:5179';
+                                        if (type === 'ALUMNI') return 'http://localhost:5180';
+                                        if (type === 'ACADEMIC') return 'http://localhost:5181';
                                     }
                                     if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
                                     if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
                                     if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
                                     if (type === 'PLACEMENT') return import.meta.env.VITE_PLACEMENT_URL;
                                     if (type === 'TIMETABLE') return import.meta.env.VITE_TIMETABLE_URL;
+                                    if (type === 'NOTIFICATION') return import.meta.env.VITE_NOTIFICATION_URL;
+                                    if (type === 'ALUMNI') return import.meta.env.VITE_ALUMNI_URL;
+                                    if (type === 'ACADEMIC') return import.meta.env.VITE_ACADEMIC_URL;
                                     return '';
                                 };
                                 const uid = user?.user_id || '';
                                 const name = encodeURIComponent(user?.full_name || user?.username || '');
                                 const isAdmin = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'].includes(user?.role?.toLowerCase());
                                 const roleParam = isAdmin ? 'admin' : (user?.role || 'staff');
+                                const currentToken = localStorage.getItem('token') || '';
                                 
                                 const modules = [
-                                    { key: 'ADMISSION', label: 'Admission Module', icon: 'fa-graduation-cap', iconColor: '#fbbf24', href: `${getModuleURL('ADMISSION')}/callback?user_id=${uid}&name=${name}&role=${roleParam}` },
-                                    { key: 'SIS', label: 'SIS Module', icon: 'fa-book-open', iconColor: '#60a5fa', href: `${getModuleURL('SIS')}/callback?user_id=${uid}&role=${roleParam}` },
-                                    { key: 'FEES', label: 'Fees Module', icon: 'fa-indian-rupee-sign', iconColor: '#34d399', href: `${getModuleURL('FEES')}/admin?token=${localStorage.getItem('token')}&user_id=${uid}&role=${roleParam}&name=${name}` },
-                                    { key: 'PLACEMENT', label: 'Placement Module', icon: 'fa-briefcase', iconColor: '#a78bfa', href: `${getModuleURL('PLACEMENT')}/callback?user_id=${uid}&role=${roleParam}` },
-                                    { key: 'TIMETABLE', label: 'TimeTable Module', icon: 'fa-calendar-days', iconColor: '#f472b6', href: `${getModuleURL('TIMETABLE')}/callback?user_id=${uid}&role=${roleParam}` },
-                                ];
+                                    { key: 'ADMISSION', label: 'Admission Module', icon: 'fa-graduation-cap', iconColor: '#fbbf24', href: `${getModuleURL('ADMISSION')}/callback?token=${currentToken}&user_id=${uid}&name=${name}&role=${roleParam}` },
+                                    { key: 'SIS', label: 'SIS Module', icon: 'fa-book-open', iconColor: '#60a5fa', href: `${getModuleURL('SIS')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'FEES', label: 'Fees Module', icon: 'fa-indian-rupee-sign', iconColor: '#34d399', href: `${getModuleURL('FEES')}/admin?token=${currentToken}&user_id=${uid}&role=${roleParam}&name=${name}` },
+                                    { key: 'PLACEMENT', label: 'Placement Module', icon: 'fa-briefcase', iconColor: '#a78bfa', href: `${getModuleURL('PLACEMENT')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'TIMETABLE', label: 'TimeTable Module', icon: 'fa-calendar-days', iconColor: '#f472b6', href: `${getModuleURL('TIMETABLE')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    isAdmin && { key: 'NOTIFICATION', label: 'Notification Module', icon: 'fa-bell', iconColor: '#fb923c', href: `${getModuleURL('NOTIFICATION')}/index.html?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'ALUMNI', label: 'Alumni Module', icon: 'fa-users-rectangle', iconColor: '#2dd4bf', href: `${getModuleURL('ALUMNI')}?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'ACADEMIC', label: 'Academic Module', icon: 'fa-book', iconColor: '#fb7185', href: `${getModuleURL('ACADEMIC')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                ].filter(Boolean);
 
                                 return modules.map(m => (
                                     <div
